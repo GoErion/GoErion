@@ -4,7 +4,7 @@
             Login
         </x-slot>
         <div class="w-full max-w-sm border border-slate-900 p-4 rounded-lg sm:p-6 md:p-8">
-            <form class="space-y-6" action="{{ route('register.store') }} " method="POST">
+            <form class="space-y-6" action="{{ route('login.store') }} " method="POST">
                 @csrf
                 <h5 class="text-xl font-bold font-sans">Login to {{ config('app.name') }}</h5>
                 <div>

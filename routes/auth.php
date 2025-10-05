@@ -16,3 +16,6 @@ Route::post('register',[RegisterController::class,'store'])
 //mnemonic
 Route::get('mnemonic/show',[RegisterController::class,'showMnemonic'])
     ->name('mnemonic');
+//logout
+Route::post('logout',[LoginController::class,'logout'])
+    ->name('logout');
