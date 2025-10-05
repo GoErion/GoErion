@@ -15,8 +15,8 @@
             <x-search/>
         </div>
         <div class="flex items-center md:order-2 space-x-1 md:space-x-2 rtl:space-x-reverse">
-            <x-nav-link href="" class="font-extrabold text-bold px-4 border border-slate-600 hover:bg-slate-600 p-2 rounded-lg">{{ __('Login') }}</x-nav-link>
-            <x-nav-link href="" class="font-extrabold text-bold px-4 border border-slate-600 hover:bg-slate-600 p-2 rounded-lg">{{ __('Register') }}</x-nav-link>
+            <x-nav-link href="{{ route('login') }}" class="font-extrabold text-bold px-4 border border-slate-600 hover:bg-slate-600 p-2 rounded-lg">{{ __('Login') }}</x-nav-link>
+            <x-nav-link href="{{ route('register') }}" class="font-extrabold text-bold px-4 border border-slate-600 hover:bg-slate-600 p-2 rounded-lg">{{ __('Register') }}</x-nav-link>
         </div>
     </div>
 </div>

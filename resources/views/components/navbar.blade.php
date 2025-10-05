@@ -79,12 +79,14 @@
                 </div>
             </div>
             <div class="flex items-center">
+                <button id="theme-toggle" type="button">
                 <div class="py-2">
                     <label class="inline-flex items-center me-5 cursor-pointer">
                         <input type="checkbox" value="" class="sr-only peer" checked>
                         <div class="relative w-11 h-6 bg-gray-200 rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-slate-400 after:border-slate-600 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-slate-800 peer-checked:bg-pink-600 dark:peer-checked:bg-pink-600"></div>
                     </label>
                 </div>
+                </button>
                 <div class="hidden md:ml-4 md:flex md:shrink-0 md:items-center">
                     <button type="button" class="relative rounded-full ml-4 p-1 hover:bg-slate-800 pr-2">
                         <span class="absolute -inset-1.5"></span>
