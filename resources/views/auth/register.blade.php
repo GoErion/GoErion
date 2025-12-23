@@ -37,7 +37,7 @@
                 </div>
                 <button type="submit" class="w-full font-extrabold font-sans border border-pink-700 hover:bg-pink-800 focus:ring-4 focus:outline-none focus:ring-pink-300 rounded-lg text-pink-500 px-5 py-2.5 text-center">{{__('Register')}}</button>
                 <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
-                    Already registered? <a href="" class="text-blue-700 hover:underline">{{__('Log In')}}</a>
+                    Already registered? <a href="{{ route('login') }}" class="text-blue-700 hover:underline">{{__('Log In')}}</a>
                 </div>
             </form>
         </div>

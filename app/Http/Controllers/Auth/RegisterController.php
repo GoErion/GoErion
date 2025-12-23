@@ -28,6 +28,6 @@ final class RegisterController extends Controller
         $validated = $request->validated();
 
         $user = $registerAction->handle($validated);
-        return redirect()->route('');
+        return redirect()->route('login');
     }
 }
