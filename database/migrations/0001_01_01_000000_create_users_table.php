@@ -17,7 +17,7 @@ return new class extends Migration
             $table->uuid('id')->primary();
             $table->string('username')->unique();
             $table->string('password');
-            $table->text('mnemonic')->nullable();
+            $table->text('mnemonic');
             $table->text('payment_address')->nullable();
             $table->timestamp('last_seen_at')->nullable();
             $table->boolean('login_2fa')->default(false);

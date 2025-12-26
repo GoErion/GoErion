@@ -15,16 +15,4 @@
           </h1>
       </div>
     </div>
-    <div class="grid grid-cols-4 gap-4">
-        <div class="bg-transparent border border-slate-400 rounded-lg">
-            <div class="">
-                @foreach($users as $user)
-                    <h1>{{ $user->username }}</h1>
-                    <p>
-                        {{ $user->id }}
-                    </p>
-                @endforeach
-            </div>
-        </div>
-    </div>
 </x-app>

@@ -6,6 +6,7 @@ namespace App\Actions;
 
 use App\Models\User;
 use App\Services\Keypair;
+use App\Services\Mnemonic;
 use Illuminate\Support\Facades\Hash;
 use Random\RandomException;
 use SodiumException;
@@ -53,14 +54,22 @@ final readonly class RegisterAction
         sodium_memzero($pinKey);
         unset($userData['pin']);
 
-        return User::create([
+        //generate mnemonic phrases or word
+        $mnemonic = new Mnemonic()->generate(config('goerion.mnemonic_length'));
+
+        $user = User::create([
             'username' => $userData['username'],
             'password' => Hash::make($userData['password']),
+            'mnemonic' => Hash::make($mnemonic),
             // messaging / crypto keys
             'msg_public_key' => $publicKey,
             'msg_private_key' => bin2hex($encryptedPrivateKey),
             'msg_private_nonce' => bin2hex($nonce),
             'msg_private_salt' => bin2hex($salt),
         ]);
+        return [
+            'user' => $user,
+            'mnemonic' => $mnemonic,
+        ];
     }
 }
