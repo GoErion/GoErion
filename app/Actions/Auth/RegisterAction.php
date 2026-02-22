@@ -11,16 +11,6 @@ use Illuminate\Validation\ValidationException;
 
 class RegisterAction
 {
-    /**
-     * @var string[] $table ->uuid('uuid')->unique();
-     * $table->foreignId('role_id')->constrained()->cascadeOnDelete();
-     * $table->foreignId('provider_id')->constrained()->cascadeOnDelete();
-     * $table->string('name');
-     * $table->string('email')->unique()->nullable();
-     * $table->string('phone')->unique()->nullable();
-     * $table->string('status',20);
-     */
-
     public function handle(array $input)
     {
         $role = Role::where('name', RoleEnum::USER->value)->value('id');
