@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->foreignId('role_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('provider_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('provider_id')->nullable()->constrained()->cascadeOnDelete();
             $table->string('name');
             $table->string('email')->unique()->nullable();
             $table->string('phone')->unique()->nullable();
