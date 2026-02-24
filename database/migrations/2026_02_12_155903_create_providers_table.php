@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('providers', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
+            $table->foreignId('owner_id')->constrained('users')->cascadeOnDelete();
             $table->string('business_name')->unique();
             $table->string('phone')->unique()->nullable();
             $table->string('email')->unique()->nullable();
@@ -22,7 +23,7 @@ return new class extends Migration
             $table->decimal('commission',10,2)->default(0.00);
             $table->timestamps();
 
-            $table->index(['location_id','uuid']);
+            $table->index(['location_id','uuid','owner_id']);
         });
     }
 
