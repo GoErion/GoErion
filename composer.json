@@ -1,11 +1,15 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "goerion/goerion",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "Online ERP Software Built with Laravel",
+    "homepage": "https://goerion.com",
     "keywords": [
         "laravel",
-        "framework"
+        "erp",
+        "inventory",
+        "software",
+        "online"
     ],
     "license": "MIT",
     "require": {

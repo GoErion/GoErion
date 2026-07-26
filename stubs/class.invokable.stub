@@ -1,0 +1,23 @@
+<?php
+declare(strict_types=1);
+
+namespace {{ namespace }};
+
+final readonly class {{ class }}
+{
+    /**
+     * Create a new class instance.
+     */
+    public function __construct()
+    {
+        //
+    }
+
+    /**
+     * Invoke the class instance.
+     */
+    public function __invoke(): void
+    {
+        //
+    }
+}
