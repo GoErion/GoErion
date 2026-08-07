@@ -9,6 +9,10 @@ use App\Http\Requests\Auth\RegisterRequest;
 
 final class RegisterController extends Controller
 {
+    public function create()
+    {
+        return view('auth.register.register');
+    }
     public function store(RegisterRequest $request,RegisterUser $action)
     {
         $action->handle($request->validated());

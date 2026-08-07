@@ -8,6 +8,7 @@ use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -21,6 +22,18 @@ class User extends Authenticatable
 
     protected $table = 'users';
 
+    protected function email(): Attribute
+    {
+        return Attribute::make(
+            set: fn(string $value) => strtolower($value),
+        );
+    }
+    protected function name(): Attribute
+    {
+        return Attribute::make(
+            get: fn(string $value) => ucwords($value),
+        );
+    }
     protected function casts(): array
     {
         return [
