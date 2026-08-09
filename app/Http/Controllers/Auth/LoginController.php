@@ -11,12 +11,14 @@ use Illuminate\Support\Facades\Auth;
 
 final class LoginController extends Controller
 {
+    #[Middleware('guest')]
     public function create()
     {
         return view('auth.login.login');
     }
 
-    #[Middleware('throttle:login')]    
+    #[Middleware('throttle:login')]
+    #[Middleware('guest')]    
     public function store(LoginRequest $request)
     {
         //attempt to login

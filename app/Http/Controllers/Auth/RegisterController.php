@@ -6,8 +6,10 @@ namespace App\Http\Controllers\Auth;
 use App\Actions\Auth\RegisterUser;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\RegisterRequest;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
 
+#[Middleware('guest')]
 final class RegisterController extends Controller
 {
     public function create()
