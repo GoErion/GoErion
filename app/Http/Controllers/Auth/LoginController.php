@@ -37,7 +37,7 @@ final class LoginController extends Controller
     #[Middleware('auth')]
     public function destroy(Request $request)
     {
-        Auth::logout();
+      Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
