@@ -3,16 +3,21 @@ declare(strict_types=1);
 
 namespace App\Models\Company;
 
+use App\Models\Auth\User;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-#[Fillable(['company_name', 'legal_name', 'registration_number', 'tax_number', 'email', 'phone', 'address',])]
+#[Fillable(['company_name', 'legal_name', 'registration_number', 'tax_number', 'email', 'phone', 'address','currency','status'])]
 #[RouteKey('uuid')]
 class Company extends Model
 {
     use HasUuid;
     protected $table = 'companies';
-   
+   public function users(): BelongsToMany
+   {
+        return $this->belongsToMany(User::class,'company_user');
+   }
 }

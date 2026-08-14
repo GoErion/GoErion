@@ -3,13 +3,23 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Company;
 
+use App\Actions\Company\CreateCompany;
 use App\Http\Controllers\Controller;
-use App\Http\Request\Company\CompanyRequest;
+use App\Http\Requests\Company\CompanyRequest;
+use Illuminate\Support\Facades\Auth;
 
 final class CompanyController extends Controller
 {
-    public function store(CompanyRequest $request)
+    public function create()
     {
-        $validated = $request->validated();
+        return view('company.create');
+    }
+    public function store(CompanyRequest $request,CreateCompany $action)
+    {
+        $user = $request->user();
+
+        $company = $action->handle($request->validated(),$user);
+
+        return redirect()->route('home')->with('success','Company successful created');
     }
 }
