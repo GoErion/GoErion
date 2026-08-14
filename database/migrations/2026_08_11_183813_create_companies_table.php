@@ -25,6 +25,8 @@ return new class extends Migration
             $table->string('currency',3)->default('kes');
             $table->string('status')->default('active');
             $table->timestamps();
+
+            $table->unique(['company_name', 'legal_name', 'registration_number', 'tax_number']);
         });
     }
 
