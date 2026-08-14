@@ -6,8 +6,10 @@ namespace App\Http\Controllers\Company;
 use App\Actions\Company\CreateCompany;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Company\CompanyRequest;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
 
+#[Middleware('auth')]
 final class CompanyController extends Controller
 {
     public function create()

@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Models\Company;
 
+use App\Models\Auth\Role;
 use App\Models\Auth\User;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -19,5 +20,9 @@ class Company extends Model
    public function users(): BelongsToMany
    {
         return $this->belongsToMany(User::class,'company_user');
+   }
+   public function roles()
+   {
+     return $this->hasMany(Role::class);
    }
 }

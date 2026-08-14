@@ -28,6 +28,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Company::class, 'company_user');
     }
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'user_roles');
+    }
     protected function email(): Attribute
     {
         return Attribute::make(

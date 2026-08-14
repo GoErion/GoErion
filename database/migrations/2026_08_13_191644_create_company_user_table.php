@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use App\Models\Auth\User;
@@ -14,10 +15,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('company_user', function (Blueprint $table) {
+        Schema::create('company_user', function (Blueprint $table)
+        {
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete();
-            $table->primary('user_id','company_id');
+            $table->primary(['user_id', 'company_id']);
         });
     }
 

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Actions\Company;
@@ -9,9 +10,9 @@ use Illuminate\Support\Facades\DB;
 
 final readonly class CreateCompany
 {
-    public function handle(array $input,User $user)
+    public function handle(array $input, User $user)
     {
-        return DB::transaction(function() use($input,$user)
+        return DB::transaction(function () use ($input, $user)
         {
             $company = Company::query()->create(
                 [
@@ -22,9 +23,21 @@ final readonly class CreateCompany
                     'email' => $input['email'] ?? null,
                     'phone' => $input['phone'] ?? null,
                     'address' => $input['address'] ?? null,
-                ]);
-                $user->companies()->attach($company->id);
-                return $company;
-        },2);
+                ]
+            );
+
+            $user->companies()->attach($company->id);
+
+            $role = $company->roles()->create(
+                [
+                    'name' => 'owner',
+                    'display_name' => 'Owner',
+                ]
+            );
+
+            $user->roles()->attach($role->id);
+
+            return $company;
+        }, 2);
     }
 }
