@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Actions\Company;
 
+use App\Models\Auth\Permission;
 use App\Models\Auth\User;
 use App\Models\Company\Company;
 use Illuminate\Support\Facades\DB;
@@ -36,6 +37,8 @@ final readonly class CreateCompany
             );
 
             $user->roles()->attach($role->id);
+
+            $role->permissions()->sync(Permission::query()->pluck('id')->all());
 
             return $company;
         }, 2);
