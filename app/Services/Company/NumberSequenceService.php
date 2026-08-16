@@ -17,12 +17,13 @@ final readonly class NumberSequenceService
                 ->lockForUpdate()->firstOrFail();
 
             $number = $sequence->next_number;
-            
+
             $sequence->increment('next_number');
 
             return sprintf(
-                '%s-%06d',
+                '%s-%d-%06d',
                 $sequence->prefix ?? '',
+                now()->year,
                 $number
             );
         });

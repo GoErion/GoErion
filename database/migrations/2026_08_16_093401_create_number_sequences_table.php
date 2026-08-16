@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete();
             $table->string('type');
             $table->string('prefix')->nullable();
-            $table->string('next_number')->default(1);
+            $table->integer('next_number')->default(1);
             $table->timestamps();
             $table->unique(['company_id','type']);
         });

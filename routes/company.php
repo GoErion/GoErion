@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Company\BranchController;
 use App\Http\Controllers\Company\CompanyController;
+use App\Http\Controllers\Company\CompanyInvitationController;
 use App\Http\Controllers\Company\SettingController;
 use App\Http\Controllers\Company\WarehouseController;
 use App\Http\Controllers\Company\WarehouseLocationController;
@@ -33,3 +34,12 @@ Route::get('company/{company}/settings/edit',[SettingController::class,'edit'])
     ->name('settings.edit');
 Route::put('company/{company}/settings', [SettingController::class, 'update'])
     ->name('settings');
+    //invitations
+Route::get('company/{company}/invitations/create',[CompanyInvitationController::class,'create'])
+    ->name('invitations.create');
+Route::post('company/{company}/invitations', [CompanyInvitationController::class, 'store'])
+    ->name('invitations.store');
+Route::get('invitations/accept/{token}',[CompanyInvitationController::class, 'accept'])
+    ->name('invitations.accept');
+Route::post('invitations/accept/{token}',[CompanyInvitationController::class, 'confirm'])
+    ->name('invitations.confirm');

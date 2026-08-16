@@ -43,4 +43,8 @@ class Company extends Model
    {
       return $this->hasMany(NumberSequence::class);
    }
+   public function invitations()
+   {
+      return $this->hasMany(CompanyInvitation::class);
+   }
 }

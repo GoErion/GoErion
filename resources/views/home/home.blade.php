@@ -32,6 +32,10 @@
                         class="rounded-lg border border-slate-800 bg-transparent px-4 py-2 text-sm text-slate-200 hover:bg-slate-800">
                         Settings
                     </a>
+                    <a href="{{ route('invitations.create', $company) }}"
+                        class="rounded-lg border border-slate-800 bg-transparent px-4 py-2 text-sm text-slate-200 hover:bg-slate-800">
+                        Invite User
+                    </a>
 
                 @endforeach
             </div>
