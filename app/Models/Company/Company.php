@@ -29,4 +29,14 @@ class Company extends Model
    {
       return $this->hasMany(Branch::class);
    }
+   public function settings()
+   {
+      return $this->hasMany(CompanySetting::class);
+   }
+   public function setting(string $key, mixed $default = null): mixed
+   {
+      return $this->settings
+         ->firstWhere('key', $key)
+         ?->value ?? $default;
+   }
 }

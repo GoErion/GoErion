@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Company\BranchController;
 use App\Http\Controllers\Company\CompanyController;
+use App\Http\Controllers\Company\SettingController;
 use App\Http\Controllers\Company\WarehouseController;
 use App\Http\Controllers\Company\WarehouseLocationController;
 use Illuminate\Support\Facades\Route;
@@ -27,3 +28,8 @@ Route::get('warehouse/{warehouse}/location/create',[WarehouseLocationController:
     ->name('location.create');
 Route::post('warehouse/{warehouse}/location', [WarehouseLocationController::class, 'store'])
     ->name('location');
+    //settings
+Route::get('company/{company}/settings/edit',[SettingController::class,'edit'])
+    ->name('settings.edit');
+Route::put('company/{company}/settings', [SettingController::class, 'update'])
+    ->name('settings');
