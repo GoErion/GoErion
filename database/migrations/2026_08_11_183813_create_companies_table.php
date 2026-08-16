@@ -15,9 +15,9 @@ return new class extends Migration
         Schema::create('companies', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->string('company_name');
-            $table->string('legal_name')->nullable();
-            $table->string('registration_number')->nullable();
+            $table->string('company_name')->unique();
+            $table->string('legal_name')->nullable()->unique();
+            $table->string('registration_number')->nullable()->unique();
             $table->string('tax_number')->nullable();
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
@@ -25,8 +25,6 @@ return new class extends Migration
             $table->string('currency',3)->default('kes');
             $table->string('status')->default('active');
             $table->timestamps();
-
-            $table->unique(['company_name', 'legal_name', 'registration_number']);
         });
     }
 

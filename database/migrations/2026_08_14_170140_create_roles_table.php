@@ -17,9 +17,11 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete();
-            $table->string('name')->unique();
+            $table->string('name');
             $table->string('display_name')->nullable();
             $table->timestamps();
+            
+            $table->unique(['company_id','name']);
         });
     }
 

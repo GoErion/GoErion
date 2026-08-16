@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Home;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company\Company;
+use App\Services\Company\NumberSequenceService;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 
