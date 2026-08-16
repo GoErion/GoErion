@@ -1,4 +1,4 @@
-<x-auth>
+<x-app>
     <div class="flex justify-center">
         <x-slot name="title">
             Create Branch
@@ -66,4 +66,4 @@
             </form>
         </div>
     </div>
-</x-auth>
+</x-app>

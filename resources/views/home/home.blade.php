@@ -6,8 +6,17 @@
             class="mb-8 flex flex-col gap-4 rounded-3xl border border-slate-800 bg-slate-950/80 p-5 shadow-xl sm:flex-row sm:items-center sm:justify-between">
             <div>
                 <h1 class="text-3xl font-bold text-white">Home</h1>
-                <p class="text-slate-400">Welcome back to your dashboard.</p>
             </div>
+            @foreach ($companies as $company)
+               <div class="flex items-center justify-center space-x-4">
+                 <div>
+                <a href="{{ route('branch.create',$company) }}" class="border border->slate-800 bg-transparent rounded-lg py-2 px-4">Branch</a>
+                </div>
+                 <div>
+                <a href="{{ route('warehouse.create',$company) }}" class="border border->slate-800 bg-transparent rounded-lg py-2 px-4">Warehouse</a>
+                </div>
+               </div>
+            @endforeach
 
             <div class="flex items-center gap-3">
                 @guest
