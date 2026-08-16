@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Models\Company;
 
+use App\Http\Requests\Company\WarehouseRequest;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
@@ -17,5 +18,9 @@ class Warehouse extends Model
     public function branch()
     {
         return $this->belongsTo(Branch::class);
+    }
+    public function locations()
+    {
+        return $this->hasMany(WarehouseLocation::class);
     }
 }

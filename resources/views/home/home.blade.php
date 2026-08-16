@@ -8,14 +8,16 @@
                 <h1 class="text-3xl font-bold text-white">Home</h1>
             </div>
             @foreach ($companies as $company)
-               <div class="flex items-center justify-center space-x-4">
-                 <div>
-                <a href="{{ route('branch.create',$company) }}" class="border border->slate-800 bg-transparent rounded-lg py-2 px-4">Branch</a>
+                <div class="flex items-center justify-center space-x-4">
+                    <div>
+                        <a href="{{ route('branch.create', $company) }}"
+                            class="border border->slate-800 bg-transparent rounded-lg py-2 px-4">Branch</a>
+                    </div>
+                    <div>
+                        <a href="{{ route('warehouse.create', $company) }}"
+                            class="border border->slate-800 bg-transparent rounded-lg py-2 px-4">Warehouse</a>
+                    </div>
                 </div>
-                 <div>
-                <a href="{{ route('warehouse.create',$company) }}" class="border border->slate-800 bg-transparent rounded-lg py-2 px-4">Warehouse</a>
-                </div>
-               </div>
             @endforeach
 
             <div class="flex items-center gap-3">
@@ -71,6 +73,16 @@
                         class="block rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 text-slate-200 hover:bg-slate-900/90">
                         Edit profile
                     </a>
+                   @foreach ($companies as $company)
+                    @foreach ($company->branches as $branch)
+                        @foreach ($branch->warehouses as $warehouse)
+                            <a href="{{ route('location.create', $warehouse) }}"
+                                class="block rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 text-slate-200 hover:bg-slate-900/90">
+                                {{ $warehouse->warehouse_name }}
+                            </a>
+                        @endforeach
+                    @endforeach
+                @endforeach
                 </nav>
 
                 <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-4 text-slate-300">

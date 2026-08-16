@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\Home;
@@ -13,7 +14,8 @@ final class HomeController extends Controller
 {
     public function home(Request $request)
     {
-        $companies = $request->user()->companies()->get();
-        return view('home.home',compact('companies'));
+        //nested relationship using with()
+        $companies = $request->user()->companies()->with('branches.warehouses.locations')->get();
+        return view('home.home', compact('companies'));
     }
 }
