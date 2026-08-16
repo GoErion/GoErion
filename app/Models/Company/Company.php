@@ -39,4 +39,8 @@ class Company extends Model
          ->firstWhere('key', $key)
          ?->value ?? $default;
    }
+   public function numberSequences()
+   {
+      return $this->hasMany(NumberSequence::class);
+   }
 }
