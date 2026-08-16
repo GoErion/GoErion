@@ -41,14 +41,3 @@
         </div>
     </div>
 </x-app>
-
-
-{{-- Cancel --}}
-<a href="{{ route('home') }}" class="mt-3 block text-center text-sm text-slate-500 hover:text-slate-300">
-    Cancel
-</a>
-
-</div>
-
-</div>
-</x-app>

@@ -48,7 +48,7 @@ final readonly class AcceptInvitation
             }
 
             //Attach the user to the company.
-            $invitation->company->user()->attach($user->id);
+            $invitation->company->users()->attach($user->id);
 
             //Assign the role belonging to this company.
             $invitation->role->users()->attach($user->id);

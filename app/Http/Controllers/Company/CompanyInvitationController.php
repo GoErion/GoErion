@@ -8,11 +8,13 @@ use App\Actions\Company\AcceptInvitation;
 use App\Actions\Company\CreateInvitation;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Company\CompanyInvitationRequest;
+use App\Mail\CompanyInvitationMail;
 use App\Models\Company\Company;
 use App\Models\Company\CompanyInvitation;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
+use Illuminate\Support\Facades\Mail;
 
 #[Middleware('auth')]
 final class CompanyInvitationController extends Controller
@@ -27,6 +29,12 @@ final class CompanyInvitationController extends Controller
     public function store(CompanyInvitationRequest $request,Company $company,CreateInvitation $action): RedirectResponse
     {
         $invitation = $action->handle($request->validated(),$company,$request->user());
+
+        Mail::to($invitation->email)
+            ->send(new CompanyInvitationMail($invitation->load(
+                [
+                    'company','role',
+                ])));
 
         return redirect()
             ->route('home')
