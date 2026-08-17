@@ -25,3 +25,5 @@ require __DIR__ . '/company.php';
 require __DIR__ . '/customer.php';
 //supplier
 require __DIR__ . '/supplier.php';
+//product
+require __DIR__ . '/product.php';

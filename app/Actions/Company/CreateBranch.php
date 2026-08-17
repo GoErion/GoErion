@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace App\Actions\Company;
 
-use App\Models\Auth\User;
 use App\Models\Company\Company;
 
 final readonly class CreateBranch

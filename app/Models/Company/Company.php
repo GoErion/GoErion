@@ -6,6 +6,7 @@ namespace App\Models\Company;
 use App\Models\Auth\Role;
 use App\Models\Auth\User;
 use App\Models\Customer\Customer;
+use App\Models\Product\Category;
 use App\Models\Supplier\Supplier;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -56,5 +57,9 @@ class Company extends Model
    public function suppliers()
    {
       return $this->hasMany(Supplier::class);
+   }
+   public function categories()
+   {
+      return $this->hasMany(Category::class);
    }
 }
