@@ -1,17 +1,14 @@
 <x-app>
     <x-slot name="title">Home</x-slot>
 
-    <div class="max-w-6xl mx-auto px-4">
+    <div class="max-w-6xl mx-auto ">
 
         {{-- Header --}}
         <div
-            class="mb-8 flex flex-col gap-4 rounded-3xl border border-slate-800 bg-slate-950/80 p-5 shadow-xl lg:flex-row lg:items-center lg:justify-between">
+            class="mb-8 flex flex-col gap-4 rounded-2xl border border-slate-800 bg-transparent py-2 px-4 shadow-xl lg:flex-row lg:items-center lg:justify-between">
 
             <div>
-                <h1 class="text-3xl font-bold text-white">Home</h1>
-                <p class="mt-1 text-sm text-slate-400">
-                    Manage your companies and business locations.
-                </p>
+                <h1 class="text-3xl font-bold text-slate-400">Home</h1>
             </div>
 
             {{-- Company Actions --}}
@@ -19,7 +16,7 @@
                 @foreach ($companies as $company)
 
                     <a href="{{ route('branch.create', $company) }}"
-                        class="rounded-lg border border-slate-800 bg-transparent px-4 py-2 text-sm text-slate-200 hover:bg-slate-800">
+                        class="rounded-lg border border-slate-800 bg-transparent px-4 py-2 text-sm text-slate-400 hover:bg-slate-800">
                         Branch
                     </a>
 
@@ -36,6 +33,9 @@
                         class="rounded-lg border border-slate-800 bg-transparent px-4 py-2 text-sm text-slate-200 hover:bg-slate-800">
                         Invite User
                     </a>
+                    <a href="{{ route('customer.create', $company) }}" class="rounded-lg border border-slate-800 bg-transparent px-4 py-2 text-sm text-slate-200 hover:bg-slate-800">
+                        Customers
+                    </a>
 
                 @endforeach
             </div>
@@ -45,7 +45,7 @@
 
                 @guest
                     <a href="{{ route('login') }}"
-                        class="rounded-2xl bg-emerald-700 px-4 py-2 text-white shadow-sm hover:bg-emerald-600">
+                        class="rounded-lg bg-emerald-700 px-4 py-2 text-slate-400 shadow-sm hover:bg-emerald-600">
                         Login
                     </a>
                 @endguest
@@ -54,7 +54,7 @@
                     <details class="relative">
 
                         <summary
-                            class="flex cursor-pointer items-center gap-3 rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2 text-slate-200 shadow-sm">
+                            class="flex cursor-pointer items-center gap-3 rounded-2xl border border-slate-700 bg-slate-900 px-4 py-2 text-slate-400 shadow-sm">
                             <span>{{ auth()->user()->name }}</span>
                             <span class="text-slate-500">▾</span>
                         </summary>
@@ -97,7 +97,7 @@
 
             {{-- Sidebar --}}
             <aside
-                class="space-y-5 rounded-3xl border border-slate-800 bg-slate-950/90 p-6 shadow-xl">
+                class="space-y-5 rounded-3xl border border-slate-800 bg-transparent p-6 shadow-xl">
 
                 <div class="space-y-2">
                     <p class="text-xs uppercase tracking-[0.24em] text-slate-500">
@@ -113,12 +113,12 @@
                 <nav class="space-y-3">
 
                     <a href="{{ route('home') }}"
-                        class="block rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 text-slate-200 hover:bg-slate-900/90">
+                        class="block rounded-2xl border border-slate-800 bg-transparent px-4 py-2 text-slate-200 hover:bg-slate-900/90">
                         Home overview
                     </a>
 
                     <a href="{{ route('profile.edit') }}"
-                        class="block rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 text-slate-200 hover:bg-slate-900/90">
+                        class="block rounded-2xl border border-slate-800 bg-transparent px-4 py-2 text-slate-200 hover:bg-slate-900/90">
                         Edit profile
                     </a>
 
@@ -145,7 +145,7 @@
                                     @foreach ($branch->warehouses as $warehouse)
 
                                         <a href="{{ route('location.create', $warehouse) }}"
-                                            class="mb-2 ml-2 block rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 text-sm text-slate-300 hover:bg-slate-800">
+                                            class="mb-2 ml-2 block rounded-2xl border border-slate-800 bg-transparent px-4 py-2 text-sm text-slate-300 hover:bg-slate-800">
 
                                             {{ $warehouse->warehouse_name }}
 
@@ -166,7 +166,7 @@
 
                 {{-- Account --}}
                 <div
-                    class="rounded-3xl border border-slate-800 bg-slate-900/80 p-4 text-slate-300">
+                    class="rounded-3xl border border-slate-800 bg-transparent px-4 py-2 text-slate-300">
 
                     <p class="text-sm uppercase tracking-[0.24em] text-slate-500">
                         Account
@@ -197,7 +197,7 @@
 
             {{-- Main Content --}}
             <main
-                class="rounded-3xl border border-slate-800 bg-slate-900/80 p-8 shadow-xl">
+                class="rounded-3xl border border-slate-800 bg-transparent px-4 py-4 shadow-xl">
 
                 <h2 class="text-2xl font-bold text-white">
                     Welcome Home!
@@ -215,7 +215,7 @@
                     <div
                         class="rounded-3xl border border-slate-800 bg-slate-950/80 p-6">
 
-                        <h3 class="text-lg font-semibold text-white">
+                        <h3 class="text-lg font-semibold text-slate-400">
                             Today
                         </h3>
 
@@ -229,7 +229,7 @@
                     <div
                         class="rounded-3xl border border-slate-800 bg-slate-950/80 p-6">
 
-                        <h3 class="text-lg font-semibold text-white">
+                        <h3 class="text-lg font-semibold text-slate-400">
                             Actions
                         </h3>
 

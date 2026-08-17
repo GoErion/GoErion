@@ -21,3 +21,5 @@ Route::delete('/profile', [ProfileController::class, 'destroy'])
 require __DIR__ . '/auth.php';
 //company route
 require __DIR__ . '/company.php';
+//customer route
+require __DIR__ . '/customer.php';

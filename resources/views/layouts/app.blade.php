@@ -11,11 +11,11 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 </head>
-    <body class="bg-slate-950 text-slate-400 m-4 border border-slate-900 rounded-2xl bg-center bg-repeat font-bold font-sans antialiased" style="background-image: url({{ asset('img/dots.svg') }})">
+    <body class="bg-slate-950 text-slate-400 bg-center bg-repeat font-bold font-sans antialiased" style="background-image: url({{ asset('img/dots.svg') }})">
         <div>
             <div class="flex min-h-screen flex-col">
-                <div class="mx-auto ml-4 mr-4 grow">
-                    <main class="mt-16 ">
+                <div class="mx-auto grow">
+                    <main class="mt-4 ">
                         {{ $slot }}
                     </main>
                 </div>
