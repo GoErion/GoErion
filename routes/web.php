@@ -23,3 +23,5 @@ require __DIR__ . '/auth.php';
 require __DIR__ . '/company.php';
 //customer route
 require __DIR__ . '/customer.php';
+//supplier
+require __DIR__ . '/supplier.php';
