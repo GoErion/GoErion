@@ -21,7 +21,7 @@ final class RegisterController extends Controller
     {
         $user = $action->handle($request->validated());
         Auth::login($user);
-        
-        return redirect()->route('company.create')->with('success','Successful Registration!');
+
+        return redirect()->intended(route('company.create', absolute: false))->with('success','Successful Registration!');
     }
 }
