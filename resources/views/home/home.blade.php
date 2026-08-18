@@ -29,9 +29,17 @@
                         class="rounded-lg border border-slate-800 bg-transparent px-4 py-2 text-sm text-slate-200 hover:bg-slate-800">
                         Settings
                     </a>
+                    <a href="{{ route('brand.create', $company) }}" class="rounded-lg border border-slate-800 bg-transparent px-4 py-2 text-sm text-slate-200 hover:bg-slate-800">
+                        Create Brand
+                    </a>
+                    
                     <a href="{{ route('invitations.create', $company) }}"
                         class="rounded-lg border border-slate-800 bg-transparent px-4 py-2 text-sm text-slate-200 hover:bg-slate-800">
                         Invite User
+                    </a>
+                    <a href="{{ route('unit.create', $company) }}"
+                        class="rounded-lg border border-slate-800 bg-transparent px-4 py-2 text-sm text-slate-200 hover:bg-slate-800">
+                        unit.create
                     </a>
                     <a href="{{ route('customer.create', $company) }}" class="rounded-lg border border-slate-800 bg-transparent px-4 py-2 text-sm text-slate-200 hover:bg-slate-800">
                         Customers

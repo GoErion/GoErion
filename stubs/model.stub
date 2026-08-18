@@ -5,11 +5,14 @@ namespace {{ namespace }};
 
 {{ factoryImport }}
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Model;
 
 #[Fillable([])]
+#[RouteKey('uuid')]
 class {{ class }} extends Model
 {
-    {{ factory }}
+    use HasUuid;
     protected $table = '';
 }

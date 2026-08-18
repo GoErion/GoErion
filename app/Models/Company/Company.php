@@ -6,13 +6,16 @@ namespace App\Models\Company;
 use App\Models\Auth\Role;
 use App\Models\Auth\User;
 use App\Models\Customer\Customer;
+use App\Models\Product\Brand;
 use App\Models\Product\Category;
+use App\Models\Product\Unit;
 use App\Models\Supplier\Supplier;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['company_name', 'legal_name', 'registration_number', 'tax_number', 'email', 'phone', 'address','currency','status'])]
 #[RouteKey('uuid')]
@@ -61,5 +64,13 @@ class Company extends Model
    public function categories()
    {
       return $this->hasMany(Category::class);
+   }
+   public function brands()
+   {
+      return $this->hasMany(Brand::class);
+   }
+   public function units(): HasMany
+   {
+      return $this->hasMany(Unit::class);
    }
 }

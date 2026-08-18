@@ -1,0 +1,17 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Models\Product;
+
+use App\Traits\HasUuid;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Model;
+
+#[Fillable([])]
+#[RouteKey('uuid')]
+class Product extends Model
+{
+    use HasUuid;
+    protected $table = 'products';
+}
