@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Product\BrandController;
 use App\Http\Controllers\Product\CategoryController;
+use App\Http\Controllers\Product\ProductController;
 use App\Http\Controllers\Product\UnitController;
 use Illuminate\Support\Facades\Route;
 
@@ -26,3 +27,8 @@ Route::get('/company/{company}/units/create',[UnitController::class, 'create'])
     ->name('unit.create');
 Route::post('/company/{company}/units',[UnitController::class, 'store'])
     ->name('unit.store');
+//product
+Route::get('/company/{company}/products/create',[ProductController::class, 'create'])
+    ->name('product.create');
+Route::post('/company/{company}/products',[ProductController::class, 'store'])
+    ->name('product.store');

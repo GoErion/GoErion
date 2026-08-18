@@ -21,12 +21,20 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(Category::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(Branch::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(Unit::class)->constrained()->cascadeOnDelete();
-            $table->foreignIdFor(Brand::class)->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Category::class)->constrained()->restrictOnDelete();
+            $table->foreignIdFor(Unit::class)->constrained()->restrictOnDelete();
+            $table->foreignIdFor(Brand::class)->nullable()->constrained()->nullOnDelete();
+            $table->string('sku'); //Stock Keeping Unit for internal unique code for identifying a specific product.
+            $table->string('name');
+            $table->text('description')->nullable();
+            $table->string('product_type')->default('physical');
+            $table->boolean('track_stock')->default(true);
+            $table->boolean('track_serial')->default(false);
+            $table->boolean('track_batch')->default(false);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
-        });
+            $table->unique(['company_id','sku']);
+    });
     }
 
     /**

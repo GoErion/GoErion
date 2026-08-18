@@ -8,6 +8,7 @@ use App\Models\Auth\User;
 use App\Models\Customer\Customer;
 use App\Models\Product\Brand;
 use App\Models\Product\Category;
+use App\Models\Product\Product;
 use App\Models\Product\Unit;
 use App\Models\Supplier\Supplier;
 use App\Traits\HasUuid;
@@ -72,5 +73,9 @@ class Company extends Model
    public function units(): HasMany
    {
       return $this->hasMany(Unit::class);
+   }
+   public function products(): HasMany
+   {
+      return $this->hasMany(Product::class);
    }
 }

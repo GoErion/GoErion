@@ -1,0 +1,38 @@
+<?php
+declare(strict_types=1);
+
+namespace App\Http\Controllers\Product;
+
+use App\Actions\Product\CreateProduct;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Product\ProductRequest;
+use App\Models\Company\Company;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
+
+#[Middleware('auth')]
+final class ProductController extends Controller
+{
+    public function create(Company $company)
+    {
+        $categories = $company->categories()
+                ->orderBy('name')
+                ->get();
+        $brands = $company->brands()
+                ->where('is_active', true)
+                ->orderBy('name')
+                ->get();
+        $units = $company->units()
+                ->orderBy('name')
+                ->get();
+
+        return view('product.create',compact('company','categories','brands','units',));
+    }
+
+    public function store(ProductRequest $request,Company $company,CreateProduct $action)
+    {
+        $product = $action->handle($request->validated(),$company);
+
+        return redirect()->route('home')->with('success', 'Unit created successfully.');
+    }
+}
