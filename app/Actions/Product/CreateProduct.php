@@ -113,6 +113,16 @@ final readonly class CreateProduct
                     ]
                 );
             }
+            
+             // Create barcodes.
+            foreach ($input['barcodes'] ?? [] as $barcode)
+            {
+
+                $product->barcodes()->create([
+                    'barcode' => $barcode['barcode'],
+                    'type' => $barcode['type'],
+                ]);
+            }
             return $product;
         });
     }

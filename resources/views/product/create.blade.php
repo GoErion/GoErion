@@ -174,7 +174,7 @@
                     </div>
 
                     <div id="price-rows" class="space-y-4">
-                        @foreach (old('prices', [['price_type' => '', 'price' => '', 'currency' => 'USD']]) as $index => $price)
+                        @foreach (old('prices', []) as $index => $price)
                             <div class="price-row rounded-xl border border-slate-800 p-4">
                                 <div class="grid gap-4 sm:grid-cols-[1fr_1fr_1fr_auto] sm:items-end">
                                     <div>
@@ -220,6 +220,60 @@
 
                                     <button type="button"
                                         class="remove-price rounded-xl border border-red-900 px-4 py-3 text-sm text-red-400">Remove</button>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-sm text-slate-300">Product Barcodes</h2>
+                            <p class="mt-1 text-xs text-slate-500">Add one or more unique product barcodes.</p>
+                        </div>
+
+                        <button type="button" id="add-barcode"
+                            class="rounded-xl border border-emerald-700 px-4 py-2 text-sm text-emerald-400">
+                            Add Barcode
+                        </button>
+                    </div>
+
+                    <div id="barcode-rows" class="space-y-4">
+                        @foreach (old('barcodes', []) as $index => $barcode)
+                            <div class="barcode-row rounded-xl border border-slate-800 p-4">
+                                <div class="grid gap-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+                                    <div>
+                                        <label for="barcode_{{ $index }}"
+                                            class="block text-sm text-slate-300">Barcode</label>
+                                        <input id="barcode_{{ $index }}" type="text"
+                                            name="barcodes[{{ $index }}][barcode]"
+                                            value="{{ $barcode['barcode'] ?? '' }}" maxlength="100" required
+                                            class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
+                                        @error("barcodes.{$index}.barcode")
+                                            <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <div>
+                                        <label for="barcode_type_{{ $index }}"
+                                            class="block text-sm text-slate-300">Barcode Type</label>
+                                        <select id="barcode_type_{{ $index }}"
+                                            name="barcodes[{{ $index }}][type]" required
+                                            class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
+                                            <option value="">Select type</option>
+                                            @foreach (['EAN' => 'EAN', 'UPC' => 'UPC', 'CODE128' => 'Code 128', 'GTIN' => 'GTIN'] as $value => $label)
+                                                <option value="{{ $value }}" @selected(($barcode['type'] ?? '') === $value)>
+                                                    {{ $label }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error("barcodes.{$index}.type")
+                                            <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <button type="button"
+                                        class="remove-barcode rounded-xl border border-red-900 px-4 py-3 text-sm text-red-400">Remove</button>
                                 </div>
                             </div>
                         @endforeach
@@ -305,6 +359,34 @@
         </div>
     </template>
 
+    <template id="barcode-row-template">
+        <div class="barcode-row rounded-xl border border-slate-800 p-4">
+            <div class="grid gap-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+                <div>
+                    <label for="barcode___INDEX__" class="block text-sm text-slate-300">Barcode</label>
+                    <input id="barcode___INDEX__" type="text" name="barcodes[__INDEX__][barcode]" maxlength="100"
+                        required
+                        class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
+                </div>
+
+                <div>
+                    <label for="barcode_type___INDEX__" class="block text-sm text-slate-300">Barcode Type</label>
+                    <select id="barcode_type___INDEX__" name="barcodes[__INDEX__][type]" required
+                        class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
+                        <option value="">Select type</option>
+                        <option value="EAN">EAN</option>
+                        <option value="UPC">UPC</option>
+                        <option value="CODE128">Code 128</option>
+                        <option value="GTIN">GTIN</option>
+                    </select>
+                </div>
+
+                <button type="button"
+                    class="remove-barcode rounded-xl border border-red-900 px-4 py-3 text-sm text-red-400">Remove</button>
+            </div>
+        </div>
+    </template>
+
     <script>
         const priceRows = document.getElementById('price-rows');
         const priceTemplate = document.getElementById('price-row-template');
@@ -329,6 +411,32 @@
         priceRows.addEventListener('click', (event) => {
             if (event.target.closest('.remove-price')) {
                 event.target.closest('.price-row').remove();
+            }
+        });
+
+        const barcodeRows = document.getElementById('barcode-rows');
+        const barcodeTemplate = document.getElementById('barcode-row-template');
+        let barcodeIndex = {{ count(old('barcodes', [])) }};
+
+        document.getElementById('add-barcode').addEventListener('click', () => {
+            const row = barcodeTemplate.content.cloneNode(true);
+
+            row.querySelectorAll('[id], [for], [name]').forEach((element) => {
+                ['id', 'for', 'name'].forEach((attribute) => {
+                    if (element.hasAttribute(attribute)) {
+                        element.setAttribute(attribute, element.getAttribute(attribute).replaceAll(
+                            '__INDEX__', barcodeIndex));
+                    }
+                });
+            });
+
+            barcodeRows.appendChild(row);
+            barcodeIndex++;
+        });
+
+        barcodeRows.addEventListener('click', (event) => {
+            if (event.target.closest('.remove-barcode')) {
+                event.target.closest('.barcode-row').remove();
             }
         });
     </script>

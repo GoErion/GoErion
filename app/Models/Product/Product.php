@@ -5,11 +5,14 @@ namespace App\Models\Product;
 
 use App\Enums\ProductType;
 use App\Models\Company\Company;
+use App\Models\Supplier\Supplier;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['company_id','category_id','unit_id','brand_id','sku','name','description','product_type','track_stock','track_serial','track_batch','is_active',])]
 #[RouteKey('uuid')]
@@ -40,6 +43,14 @@ class Product extends Model
     public function prices()
     {
         return $this->hasMany(ProductPrice::class);
+    }
+    public function barcodes(): HasMany
+    {
+        return $this->hasMany(ProductBarcode::class);
+    }
+    public function suppliers(): BelongsToMany
+    {
+        return $this->belongsToMany(Supplier::class,'product_suppliers')->withPivot(['supplier_sku','cost',])   ->withTimestamps();
     }
     protected function casts(): array
     {

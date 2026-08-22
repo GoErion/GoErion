@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Product;
 
+use App\Enums\BarcodeType;
 use App\Enums\PriceType;
 use App\Enums\ProductType;
 use Illuminate\Contracts\Validation\ValidationRule;
@@ -37,11 +38,17 @@ final class ProductRequest extends FormRequest
             'track_stock' => ['boolean',],
             'track_serial' => ['boolean',],
             'track_batch' => ['boolean',],
+
             //product price
             'prices' => ['nullable','array',],
             'prices.*.price_type' => ['required',Rule::enum(PriceType::class),],
             'prices.*.price' => ['required','numeric','min:0',],
-            'prices.*.currency' => ['required','string','size:3',], 
+            'prices.*.currency' => ['required','string','size:3',],
+
+             // Barcodes
+            'barcodes' => ['nullable','array',],
+            'barcodes.*.barcode' => ['required','string','max:100','distinct','unique:product_barcodes,barcode',],
+            'barcodes.*.type' => ['required',Rule::enum(BarcodeType::class),],
                ];
     }
 }
