@@ -19,7 +19,6 @@ final class ProductController extends Controller
                 ->orderBy('name')
                 ->get();
         $brands = $company->brands()
-                ->where('is_active', true)
                 ->orderBy('name')
                 ->get();
         $units = $company->units()
