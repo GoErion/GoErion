@@ -37,6 +37,10 @@ class Product extends Model
     {
         return $this->belongsTo(Brand::class);
     }
+    public function prices()
+    {
+        return $this->hasMany(ProductPrice::class);
+    }
     protected function casts(): array
     {
         return [

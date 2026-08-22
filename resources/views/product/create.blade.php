@@ -137,6 +137,12 @@
                         <option value="service" @selected(old('product_type') === 'service')>Service</option>
                         <option value="digital" @selected(old('product_type') === 'digital')>Digital</option>
                     </select>
+
+                    @error('product_type')
+                        <p class="mt-1 text-sm text-red-400">
+                            {{ $message }}
+                        </p>
+                    @enderror
                 </div>
 
                 <div>
@@ -146,6 +152,78 @@
 
                     <textarea id="description" name="description" rows="4"
                         class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">{{ old('description') }}</textarea>
+
+                    @error('description')
+                        <p class="mt-1 text-sm text-red-400">
+                            {{ $message }}
+                        </p>
+                    @enderror
+                </div>
+
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between gap-4">
+                        <div>
+                            <h2 class="text-sm text-slate-300">Product Prices</h2>
+                            <p class="mt-1 text-xs text-slate-500">Add prices only where they apply.</p>
+                        </div>
+
+                        <button type="button" id="add-price"
+                            class="rounded-xl border border-emerald-700 px-4 py-2 text-sm text-emerald-400">
+                            Add Price
+                        </button>
+                    </div>
+
+                    <div id="price-rows" class="space-y-4">
+                        @foreach (old('prices', [['price_type' => '', 'price' => '', 'currency' => 'USD']]) as $index => $price)
+                            <div class="price-row rounded-xl border border-slate-800 p-4">
+                                <div class="grid gap-4 sm:grid-cols-[1fr_1fr_1fr_auto] sm:items-end">
+                                    <div>
+                                        <label for="price_type_{{ $index }}"
+                                            class="block text-sm text-slate-300">Price Type</label>
+                                        <select id="price_type_{{ $index }}"
+                                            name="prices[{{ $index }}][price_type]" required
+                                            class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
+                                            <option value="">Select type</option>
+                                            @foreach (['cost' => 'Cost', 'retail' => 'Retail', 'wholesale' => 'Wholesale', 'dealer' => 'Dealer'] as $value => $label)
+                                                <option value="{{ $value }}" @selected(($price['price_type'] ?? '') === $value)>
+                                                    {{ $label }}</option>
+                                            @endforeach
+                                        </select>
+                                        @error("prices.{$index}.price_type")
+                                            <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <div>
+                                        <label for="price_{{ $index }}"
+                                            class="block text-sm text-slate-300">Price</label>
+                                        <input id="price_{{ $index }}" type="number"
+                                            name="prices[{{ $index }}][price]"
+                                            value="{{ $price['price'] ?? '' }}" min="0" step="0.01" required
+                                            class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
+                                        @error("prices.{$index}.price")
+                                            <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <div>
+                                        <label for="currency_{{ $index }}"
+                                            class="block text-sm text-slate-300">Currency</label>
+                                        <input id="currency_{{ $index }}" type="text"
+                                            name="prices[{{ $index }}][currency]"
+                                            value="{{ $price['currency'] ?? 'USD' }}" maxlength="3" required
+                                            class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 uppercase text-white">
+                                        @error("prices.{$index}.currency")
+                                            <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+
+                                    <button type="button"
+                                        class="remove-price rounded-xl border border-red-900 px-4 py-3 text-sm text-red-400">Remove</button>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
                 </div>
 
                 <div class="space-y-3">
@@ -175,7 +253,8 @@
 
                 <div class="flex justify-end gap-3">
 
-                    <a href="{{ route('home') }}" class="rounded-xl border border-slate-700 px-5 py-3 text-slate-300">
+                    <a href="{{ route('home') }}"
+                        class="rounded-xl border border-slate-700 px-5 py-3 text-slate-300">
                         Cancel
                     </a>
 
@@ -190,5 +269,68 @@
         </div>
 
     </div>
+
+    <template id="price-row-template">
+        <div class="price-row rounded-xl border border-slate-800 p-4">
+            <div class="grid gap-4 sm:grid-cols-[1fr_1fr_1fr_auto] sm:items-end">
+                <div>
+                    <label for="price_type___INDEX__" class="block text-sm text-slate-300">Price Type</label>
+                    <select id="price_type___INDEX__" name="prices[__INDEX__][price_type]" required
+                        class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
+                        <option value="">Select type</option>
+                        <option value="cost">Cost</option>
+                        <option value="retail">Retail</option>
+                        <option value="wholesale">Wholesale</option>
+                        <option value="dealer">Dealer</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label for="price___INDEX__" class="block text-sm text-slate-300">Price</label>
+                    <input id="price___INDEX__" type="number" name="prices[__INDEX__][price]" min="0"
+                        step="0.01" required
+                        class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
+                </div>
+
+                <div>
+                    <label for="currency___INDEX__" class="block text-sm text-slate-300">Currency</label>
+                    <input id="currency___INDEX__" type="text" name="prices[__INDEX__][currency]" value="USD"
+                        maxlength="3" required
+                        class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 uppercase text-white">
+                </div>
+
+                <button type="button"
+                    class="remove-price rounded-xl border border-red-900 px-4 py-3 text-sm text-red-400">Remove</button>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        const priceRows = document.getElementById('price-rows');
+        const priceTemplate = document.getElementById('price-row-template');
+        let priceIndex = {{ count(old('prices', [])) }};
+
+        document.getElementById('add-price').addEventListener('click', () => {
+            const row = priceTemplate.content.cloneNode(true);
+
+            row.querySelectorAll('[id], [for], [name]').forEach((element) => {
+                ['id', 'for', 'name'].forEach((attribute) => {
+                    if (element.hasAttribute(attribute)) {
+                        element.setAttribute(attribute, element.getAttribute(attribute).replaceAll(
+                            '__INDEX__', priceIndex));
+                    }
+                });
+            });
+
+            priceRows.appendChild(row);
+            priceIndex++;
+        });
+
+        priceRows.addEventListener('click', (event) => {
+            if (event.target.closest('.remove-price')) {
+                event.target.closest('.price-row').remove();
+            }
+        });
+    </script>
 
 </x-app>

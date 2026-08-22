@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Actions\Product;
@@ -13,9 +14,9 @@ final readonly class CreateProduct
     public function __construct(private readonly NumberSequenceService $sequence)
     {
     }
-    public function handle(array $input,Company $company)
+    public function handle(array $input, Company $company)
     {
-        return DB::transaction(function() use($company,$input)
+        return DB::transaction(function () use ($company, $input)
         {
             //Category must belong to this company.
             $categoryExists = $company->categories()->whereKey($input['category_id'])->exists();
@@ -74,20 +75,20 @@ final readonly class CreateProduct
                 $sku = $this->sequence->next($sequence);
             }
             //Tracking rules.
-            if ( ($input['track_serial'] ?? false) && ! ($input['track_stock'] ?? true))
+            if (($input['track_serial'] ?? false) && ! ($input['track_stock'] ?? true))
             {
                 throw new \InvalidArgumentException(
                     'Serial tracking requires stock tracking.'
                 );
             }
-            if ( ($input['track_batch'] ?? false) && ! ($input['track_stock'] ?? true))
+            if (($input['track_batch'] ?? false) && ! ($input['track_stock'] ?? true))
             {
                 throw new \InvalidArgumentException(
                     'Batch tracking requires stock tracking.'
                 );
             }
             //Create product through the company relationship.
-            return $company->products()->create([
+            $product = $company->products()->create([
                 'category_id' => $input['category_id'],
                 'unit_id' => $input['unit_id'],
                 'brand_id' => $input['brand_id'] ?? null,
@@ -100,6 +101,19 @@ final readonly class CreateProduct
                 'track_batch' => $input['track_batch'] ?? false,
                 'is_active' => true,
             ]);
+
+            // Create product prices.
+            foreach ($input['prices'] ?? [] as $price)
+            {
+                $product->prices()->create(
+                    [
+                        'price_type' => $price['price_type'],
+                        'price' => $price['price'],
+                        'currency' => strtoupper($price['currency']),
+                    ]
+                );
+            }
+            return $product;
         });
     }
 }
