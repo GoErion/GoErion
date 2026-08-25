@@ -78,4 +78,8 @@ class Company extends Model
    {
       return $this->hasMany(Product::class);
    }
+   public function fiscalYears()
+   {
+      return $this->hasMany(FiscalYear::class);
+   }
 }
