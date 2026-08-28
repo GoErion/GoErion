@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 use App\Models\Company\Company;
+use App\Models\Customer\CustomerGroup;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -17,6 +18,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique();
             $table->foreignIdFor(Company::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(CustomerGroup::class)->nullable()->constrained()->nullOnDelete();
             $table->string('name');
             $table->string('code');
             $table->string('email')->nullable();

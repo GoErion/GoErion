@@ -36,4 +36,8 @@ class Customer extends Model
     {
         return $this->hasMany(CustomerContact::class);
     }
+    public function group()
+    {
+        return $this->belongsTo(Customer::class, 'customer_group_id');
+    }
 }

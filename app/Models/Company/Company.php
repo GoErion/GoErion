@@ -6,6 +6,7 @@ namespace App\Models\Company;
 use App\Models\Auth\Role;
 use App\Models\Auth\User;
 use App\Models\Customer\Customer;
+use App\Models\Customer\CustomerGroup;
 use App\Models\Product\Brand;
 use App\Models\Product\Category;
 use App\Models\Product\Product;
@@ -81,5 +82,9 @@ class Company extends Model
    public function fiscalYears()
    {
       return $this->hasMany(FiscalYear::class);
+   }
+   public function customerGroups()
+   {
+      return $this->hasMany(CustomerGroup::class);
    }
 }
