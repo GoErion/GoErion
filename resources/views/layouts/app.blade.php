@@ -6,6 +6,7 @@
     <metaname="viewport" content="width=device-width, initial-scale=1.0">
         @include('layouts.components.head')
     @vite(['resources/css/app.css','resources/js/app.js'])
+    @livewireStyles
 </head>
     <body class="bg-slate-950 text-slate-400 bg-center bg-repeat font-bold font-sans antialiased" style="background-image: url({{ asset('img/dots.svg') }})">
         <div>
@@ -21,6 +22,7 @@
                     </div>
                 @endsession
             </div>
+            @livewireScripts
         </div>
     </body>
 </html>
