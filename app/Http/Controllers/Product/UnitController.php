@@ -29,6 +29,6 @@ final class UnitController extends Controller
             $request->validated()
         );
 
-        return redirect()->route('home')->with('success', 'Unit created successfully.');
+        return redirect()->route('home',$company)->with('success', 'Unit created successfully.');
     }
 }

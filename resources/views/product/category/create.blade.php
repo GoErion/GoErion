@@ -1,4 +1,4 @@
-<x-app>
+<x-home :company="$company">
 
     <x-slot name="title">
         Create Category
@@ -82,7 +82,7 @@
 
                 <div class="flex justify-end gap-3">
 
-                    <a href="{{ route('home') }}" class="rounded-xl border border-slate-700 px-5 py-3 text-slate-300">
+                    <a href="{{ route('home',$company) }}" class="rounded-xl border border-slate-700 px-5 py-3 text-slate-300">
                         Cancel
                     </a>
 
@@ -98,4 +98,4 @@
 
     </div>
 
-</x-app>
+</x-home>

@@ -40,6 +40,6 @@ final class ProductController extends Controller
     {
         $product = $action->handle($request->validated(),$company);
 
-        return redirect()->back()->with('success', 'product created successfully.');
+        return redirect()->route('product.index',$company)->with('success', 'product created successfully.');
     }
 }

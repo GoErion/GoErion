@@ -10,10 +10,24 @@
                 </h1>
             </div>
 
-            <a href="{{ route('product.create', $company) }}"
+            <div class="flex items-center space-x-3">
+                <a href="{{ route('product.create', $company) }}"
                 class="inline-flex items-center justify-center rounded-lg border border-slate-900 bg-transparent px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-slate-700 hover:text-white">
                 Add Product
             </a>
+            <a href="{{ route('category.create', $company) }}"
+                class="inline-flex items-center justify-center rounded-lg border border-slate-900 bg-transparent px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-slate-700 hover:text-white">
+                Add Category
+            </a>
+            <a href="{{ route('brand.create', $company) }}"
+                class="inline-flex items-center justify-center rounded-lg border border-slate-900 bg-transparent px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-slate-700 hover:text-white">
+                Add Brand
+            </a>
+            <a href="{{ route('unit.create', $company) }}"
+                class="inline-flex items-center justify-center rounded-lg border border-slate-900 bg-transparent px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-slate-700 hover:text-white">
+                Add Unit
+            </a>
+            </div>
         </div>
 
         @if ($products->isEmpty())

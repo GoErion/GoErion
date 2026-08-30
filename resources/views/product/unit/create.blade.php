@@ -1,4 +1,4 @@
-<x-app>
+<x-home :company="$company">
 
     <x-slot name="title">
         Create Unit
@@ -62,4 +62,4 @@
 
     </div>
 
-</x-app>
+</x-home>

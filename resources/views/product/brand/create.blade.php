@@ -1,4 +1,4 @@
-<x-app>
+<x-home :company="$company">
 
     <x-slot name="title">
         Create Brand
@@ -63,4 +63,4 @@
 
     </div>
 
-</x-app>
+</x-home>

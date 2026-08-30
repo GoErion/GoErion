@@ -21,6 +21,6 @@ final class BrandController extends Controller
     {
         $brand = $action->handle($request->validated(),$company,);
 
-        return redirect()->route('home')->with('success', 'Customer created successfully.');
+        return redirect()->route('home',$company)->with('success', 'Customer created successfully.');
     }
 }
