@@ -8,7 +8,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Customer\CustomerGroupRequest;
 use App\Models\Company\Company;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 
+#[Middleware('auth')]
 final class CustomerGroupController extends Controller
 {
     public function store(CustomerGroupRequest $request, Company $company,CreateCustomerGroup $action)

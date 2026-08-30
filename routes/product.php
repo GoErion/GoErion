@@ -34,3 +34,4 @@ Route::get('/company/{company}/products/create',[ProductController::class, 'crea
     ->name('product.create');
 Route::post('/company/{company}/products',[ProductController::class, 'store'])
     ->name('product.store');
+Route::get('company/{company}/products/{product}',[ProductController::class,'show'])        ->name('product.show');

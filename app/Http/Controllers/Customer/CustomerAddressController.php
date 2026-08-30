@@ -8,7 +8,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Customer\CustomerAddressRequest;
 use App\Models\Customer\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Attributes\Controllers\Middleware;
 
+#[Middleware('auth')]
 final class CustomerAddressController extends Controller
 {
     public function create(Customer $customer)

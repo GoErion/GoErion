@@ -7,6 +7,7 @@ use App\Actions\Product\CreateProduct;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Product\ProductRequest;
 use App\Models\Company\Company;
+use App\Models\Product\Product;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 
@@ -41,5 +42,11 @@ final class ProductController extends Controller
         $product = $action->handle($request->validated(),$company);
 
         return redirect()->route('product.index',$company)->with('success', 'product created successfully.');
+    }
+    public function show(Company $company,Product $product)
+    {
+        $product = $company->products()->with(['category','brand','unit','prices'])->whereKey($product->getKey())->firstOrFail();
+
+        return view('product.show',compact('company','product'));
     }
 }
