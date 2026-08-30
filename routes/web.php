@@ -1,9 +1,6 @@
 <?php
 
 use App\Http\Controllers\Auth\Profile\ProfileController;
-use App\Http\Controllers\Company\BranchController;
-use App\Http\Controllers\Company\CompanyController;
-use App\Http\Controllers\Company\WarehouseController;
 use App\Http\Controllers\Home\HomeController;
 use Illuminate\Support\Facades\Route;
 
