@@ -12,7 +12,7 @@
    <div class="container mx-auto">
        <div class="flex items-center justify-center">
            <div class="">
-            <a href="{{ route('home') }}">
+            <a href="{{ route('marketing') }}">
                 <img width="200" height="200" src="{{ asset('img/erion.png') }}" alt="erion logo">
             </a>
            </div>

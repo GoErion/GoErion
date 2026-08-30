@@ -3,7 +3,7 @@
         <x-slot name="title">
             Register
         </x-slot>
-        <div class="w-full max-w-sm border border-slate-900 p-4 rounded-2xl sm:p-6 md:p-8">
+        <div class="w-full max-w-sm border border-slate-900 p-4 rounded-4xl sm:p-6 md:p-8">
             <form class="space-y-6" action="{{ route('register') }}" method="POST">
                 @csrf
                 <h5 class="text-xl font-bold font-sans">Register to {{ config('app.name') }}</h5>

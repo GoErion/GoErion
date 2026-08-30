@@ -1,4 +1,4 @@
-<x-app>
+<x-home>
 
     <x-slot name="title">
         Create Product
@@ -441,4 +441,4 @@
         });
     </script>
 
-</x-app>
+</x-home>

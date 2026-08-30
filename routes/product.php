@@ -28,6 +28,8 @@ Route::get('/company/{company}/units/create',[UnitController::class, 'create'])
 Route::post('/company/{company}/units',[UnitController::class, 'store'])
     ->name('unit.store');
 //product
+Route::get('/company/{company}/products',[ProductController::class, 'index'])
+    ->name('product.index');
 Route::get('/company/{company}/products/create',[ProductController::class, 'create'])
     ->name('product.create');
 Route::post('/company/{company}/products',[ProductController::class, 'store'])

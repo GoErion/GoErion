@@ -13,6 +13,14 @@ use Illuminate\Routing\Attributes\Controllers\Middleware;
 #[Middleware('auth')]
 final class ProductController extends Controller
 {
+    public function index(Request $request, Company $company)
+    {
+        abort_unless($request->user()->companies()->whereKey($company->getKey())->exists(),403);
+
+        $products = $company->products()->latest()->paginate(20);
+
+        return view('product.index', compact('company','products',));
+    }
     public function create(Company $company)
     {
         $categories = $company->categories()
@@ -32,6 +40,6 @@ final class ProductController extends Controller
     {
         $product = $action->handle($request->validated(),$company);
 
-        return redirect()->route('home')->with('success', 'Unit created successfully.');
+        return redirect()->back()->with('success', 'product created successfully.');
     }
 }

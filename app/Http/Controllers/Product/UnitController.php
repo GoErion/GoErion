@@ -13,6 +13,10 @@ use Illuminate\Routing\Attributes\Controllers\Middleware;
 #[Middleware('auth')]
 final class UnitController extends Controller
 {
+    public function index()
+    {
+        
+    }
     public function create(Company $company)
     {
         return view('product.unit.create', compact('company'));

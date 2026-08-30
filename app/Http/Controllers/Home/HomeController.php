@@ -13,10 +13,13 @@ use Illuminate\Routing\Attributes\Controllers\Middleware;
 #[Middleware('auth')]
 final class HomeController extends Controller
 {
-    public function home(Request $request)
+    public function home(Request $request,Company $company)
     {
         //nested relationship using with()
         $companies = $request->user()->companies()->with('branches.warehouses.locations')->get();
-        return view('home.home', compact('companies'));
+        abort_unless(
+            $companies->contains($company),403);
+
+        return view('index', compact('companies','company',));
     }
 }

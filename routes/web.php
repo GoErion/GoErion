@@ -11,7 +11,6 @@ Route::get('/',function()
 {
     return view('marketing.index');
 })->name('marketing');
-
 Route::get('home',[HomeController::class,'home'])
     ->name('home');
 //profile
