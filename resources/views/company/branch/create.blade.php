@@ -59,7 +59,7 @@
                     <div class="md:col-span-2 flex gap-4">
                         <button type="submit"
                             class="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 transition">{{ __('Create Branch') }}</button>
-                        <a href="{{ route('home') }}"
+                        <a href="{{ route('home',$company) }}"
                             class="px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition">{{ __('Cancel') }}</a>
                     </div>
                 </div>

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Models\Company\Company;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
@@ -19,7 +20,7 @@ final class LoginController extends Controller
 
     #[Middleware('throttle:login')]
     #[Middleware('guest')]    
-    public function store(LoginRequest $request)
+    public function store(LoginRequest $request,Company $company)
     {
         //attempt to login
         if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember')))
@@ -28,7 +29,7 @@ final class LoginController extends Controller
 
             return redirect()->intended(route('home', absolute: false));
         }
-        return back()->withErrors([
+        return redirect()->intended(route('home',$company))->withErrors([
             'email' => 'These credentials do not match our records.'
         ])->withInput($request->except('password'));
     }
@@ -42,6 +43,6 @@ final class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('home');
+        return redirect()->route('marketing');
     }
 }

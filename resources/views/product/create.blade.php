@@ -1,4 +1,5 @@
-<x-home>
+@props(['company'])
+<x-home :company="$company">
 
     <x-slot name="title">
         Create Product
@@ -307,7 +308,7 @@
 
                 <div class="flex justify-end gap-3">
 
-                    <a href="{{ route('home') }}"
+                    <a href="{{ route('home',$company) }}"
                         class="rounded-xl border border-slate-700 px-5 py-3 text-slate-300">
                         Cancel
                     </a>

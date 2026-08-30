@@ -19,6 +19,7 @@
         "livewire/livewire": "*"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "*",
         "fakerphp/faker": "^1.23",
         "laravel/boost": "^2.2",
         "laravel/pail": "^1.2.5",

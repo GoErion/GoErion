@@ -22,7 +22,6 @@ final class CompanyController extends Controller
 
         $company = $action->handle($request->validated(),$user);
 
-        return redirect()->route('home')->with('success', 'Company created successfully.');
-        // return redirect()->route('branch.create',$company)->with('success', 'Company created successfully.');
+        return redirect()->route('branch.create',$company)->with('success', 'Company created successfully.');
     }
 }

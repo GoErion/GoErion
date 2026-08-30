@@ -24,7 +24,12 @@
       </div>
      @endguest
      @auth
-         <a href="">loged in</a>
+         <div class="ms-3">
+          <form action="{{ route('logout') }}" method="POST">
+              @csrf
+              <button type="submit" class="text-sm/6 font-semibold bg-pink-800 text-slate-900 dark:text-slate-300 py-2 px-4 rounded-lg">Logout</button>
+          </form>
+         </div>
      @endauth
     </nav>
     <el-dialog>

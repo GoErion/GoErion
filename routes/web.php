@@ -8,7 +8,7 @@ Route::get('/',function()
 {
     return view('marketing.index');
 })->name('marketing');
-Route::get('home',[HomeController::class,'home'])
+Route::get('companies/{company}/home',[HomeController::class,'home'])
     ->name('home');
 //profile
 Route::get('/profile', [ProfileController::class, 'edit'])

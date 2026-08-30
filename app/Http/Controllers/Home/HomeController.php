@@ -16,9 +16,9 @@ final class HomeController extends Controller
     public function home(Request $request,Company $company)
     {
         //nested relationship using with()
-        $companies = $request->user()->companies()->with('branches.warehouses.locations')->get();
+        $companies = $request->user()->companies()->get();
         abort_unless(
-            $companies->contains($company),403);
+            $companies->contains($company->getKey()),403);
 
         return view('index', compact('companies','company',));
     }

@@ -2,7 +2,7 @@
 <x-app>
     <x-slot name="title">Home</x-slot>
     <div>
-       <x-sidebar/>
+       <x-sidebar :company="$company"/>
        <div class="lg:pl-72">
             <div class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-slate-800 px-4 sm:gap-x-6 sm:px-6 lg:px-8 lg:ms-3">
                 <button type="button" command="show-modal" commandfor="sidebar" class="-m-2.5 p-2.5 lg:hidden text-slate-300 hover:text-slate-700">

@@ -21,6 +21,6 @@ final class BranchController extends Controller
     {
         $branch = $action->handle($request->validated(),$company);
 
-        return redirect()->route('home')->with('success', 'Branch created successfully.');
+        return redirect()->route('home',$company)->with('success', 'Branch created successfully.');
     }
 }
