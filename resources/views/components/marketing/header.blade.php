@@ -20,7 +20,7 @@
      @guest
       <div class="hidden lg:flex lg:flex-1 lg:justify-end space-x-3">
           <a href="{{ route('login') }}" class="text-sm/6 font-semibold border border-pink-800 text-slate-900 dark:text-slate-300 py-2 px-8 rounded-lg">Sign In</a>
-          <a href="{{  route('register') }}" class="text-sm/6 font-semibold bg-pink-800 text-slate-900 dark:text-slate-300 py-2 px-4 rounded-lg">Get Started</a>
+          <a href="{{ route('register') }}" class="text-sm/6 font-semibold bg-pink-800 text-slate-900 dark:text-slate-300 py-2 px-4 rounded-lg">Get Started</a>
       </div>
      @endguest
      @auth
