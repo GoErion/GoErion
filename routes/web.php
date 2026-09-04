@@ -15,9 +15,7 @@ Route::middleware(['auth', 'auth.session', 'verified'])->group(function (): void
     Route::get('companies/select', CompanySelectionController::class)->name('companies.select');
     Route::get('companies/{company}/home', [HomeController::class, 'home'])->name('home');
 
-    Route::get('profile', [ProfileController::class, 'edit'])
-        ->middleware('password.confirm')
-        ->name('profile.edit');
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('profile', [ProfileController::class, 'update'])
         ->middleware('password.confirm')
         ->name('profile.update');

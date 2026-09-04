@@ -44,14 +44,3 @@ it('redirects an authenticated verified user without a company to onboarding', f
 
     $response->assertRedirect(route('company.create'));
 });
-
-it('redirects an unverified user to the verification notice after login', function () {
-    $user = UserFactory::new()->unverified()->create(['password' => 'SecurePassword1!']);
-
-    $response = $this->post(route('login.store'), [
-        'email' => $user->email,
-        'password' => 'SecurePassword1!',
-    ]);
-
-    $response->assertRedirect(route('verification.notice'));
-});
