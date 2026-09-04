@@ -6,20 +6,17 @@ namespace App\Http\Controllers\Home;
 
 use App\Http\Controllers\Controller;
 use App\Models\Company\Company;
-use App\Services\Company\NumberSequenceService;
 use Illuminate\Http\Request;
-use Illuminate\Routing\Attributes\Controllers\Middleware;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\View\View;
 
-#[Middleware('auth')]
 final class HomeController extends Controller
 {
-    public function home(Request $request,Company $company)
+    public function home(Request $request, Company $company): View
     {
-        //nested relationship using with()
-        $companies = $request->user()->companies()->get();
-        abort_unless(
-            $companies->contains($company->getKey()),403);
+        Gate::authorize('view', $company);
+        $companies = $request->user()->companies()->orderBy('company_name')->get();
 
-        return view('index', compact('companies','company',));
+        return view('index', compact('companies', 'company'));
     }
 }

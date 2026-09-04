@@ -10,8 +10,13 @@
                         <li>
                             <ul role="list" class="-mx-2 space-y-1">
                                 <li>
-                                    <x-sidebar-link>
+                                    <x-sidebar-link href="{{ route('home', $company) }}">
                                         Dashboard
+                                    </x-sidebar-link>
+                                </li>
+                                <li>
+                                    <x-sidebar-link href="{{ route('companies.select') }}">
+                                        Switch company
                                     </x-sidebar-link>
                                 </li>
                                 <li>

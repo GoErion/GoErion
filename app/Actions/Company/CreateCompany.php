@@ -11,34 +11,24 @@ use Illuminate\Support\Facades\DB;
 
 final readonly class CreateCompany
 {
-    public function handle(array $input, User $user)
+    /** @param array{company_name: string, legal_name?: ?string, registration_number?: ?string, tax_number?: ?string, email?: ?string, phone?: ?string, address?: ?string} $values */
+    public function handle(array $values, User $creator): Company
     {
-        return DB::transaction(function () use ($input, $user)
-        {
-            $company = Company::query()->create(
-                [
-                    'company_name' => $input['company_name'],
-                    'legal_name' => $input['legal_name'] ?? null,
-                    'registration_number' => $input['registration_number'] ?? null,
-                    'tax_number' => $input['tax_number'] ?? null,
-                    'email' => $input['email'] ?? null,
-                    'phone' => $input['phone'] ?? null,
-                    'address' => $input['address'] ?? null,
-                ]
+        return DB::transaction(function () use ($values, $creator): Company {
+            $company = Company::query()->create($values);
+            $creator->companies()->attach($company);
+
+            $ownerRole = $company->roles()->firstOrCreate(
+                ['name' => 'owner'],
+                ['display_name' => 'Owner'],
+            );
+            $companyUpdatePermission = Permission::query()->firstOrCreate(
+                ['name' => 'company.update'],
+                ['display_name' => 'Update Company'],
             );
 
-            $user->companies()->attach($company->id);
-
-            $role = $company->roles()->create(
-                [
-                    'name' => 'owner',
-                    'display_name' => 'Owner',
-                ]
-            );
-
-            $user->roles()->attach($role->id);
-
-            $role->permissions()->sync(Permission::query()->pluck('id')->all());
+            $ownerRole->permissions()->sync([$companyUpdatePermission->getKey()]);
+            $creator->roles()->syncWithoutDetaching([$ownerRole->getKey()]);
 
             return $company;
         }, 2);

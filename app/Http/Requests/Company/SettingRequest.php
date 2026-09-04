@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Requests\Company;
@@ -17,7 +18,7 @@ final class SettingRequest extends FormRequest
         $company = $this->route('company');
 
         return $company instanceof Company
-            && $this->user()?->companies()->whereKey($company->getKey())->exists() === true;
+            && $this->user()?->can('view', $company) === true;
     }
 
     /**

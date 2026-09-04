@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\Company;
@@ -14,7 +15,8 @@ final class CompanySelectionController extends Controller
         $companies = $request->user()
             ->companies()
             ->orderBy('company_name')
-            ->get();
+            ->orderBy('companies.id')
+            ->paginate(12);
 
         return view('company.select', compact('companies'));
     }

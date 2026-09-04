@@ -32,3 +32,28 @@ it('lists only companies belonging to the authenticated user', function () {
         ->assertDontSee('Other Company')
         ->assertSee(route('home', $memberCompany), false);
 });
+
+it('shows an empty state and company creation action', function () {
+    $user = UserFactory::new()->create();
+
+    $this->actingAs($user)->get(route('companies.select'))
+        ->assertOk()
+        ->assertSee('No companies yet')
+        ->assertSee(route('company.create'), false);
+});
+
+it('paginates accessible companies in a predictable order', function () {
+    $user = UserFactory::new()->create();
+    $companies = CompanyFactory::new()->count(13)->sequence(
+        fn ($sequence) => ['company_name' => sprintf('Company %02d', $sequence->index + 1)],
+    )->create();
+    $user->companies()->attach($companies);
+
+    $response = $this->actingAs($user)->get(route('companies.select'));
+
+    $response->assertOk()
+        ->assertSee('Company 01')
+        ->assertSee('Company 12')
+        ->assertDontSee('Company 13')
+        ->assertSee('?page=2', false);
+});

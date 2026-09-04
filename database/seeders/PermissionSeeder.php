@@ -1,10 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Database\Seeders;
 
 use App\Models\Auth\Permission;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class PermissionSeeder extends Seeder
@@ -15,6 +15,10 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         $permissions = [
+            [
+                'name' => 'company.update',
+                'display_name' => 'Update Company',
+            ],
             [
                 'name' => 'companies.view',
                 'display_name' => 'View Companies',
@@ -114,14 +118,13 @@ class PermissionSeeder extends Seeder
                 'display_name' => 'View Reports',
             ],
         ];
-        foreach($permissions as $permission)
-            {
-                Permission::query()->updateOrCreate(
-                    [
-                        'name' => $permission['name']
-                    ],
-                    $permission
-                    );
-            }
+        foreach ($permissions as $permission) {
+            Permission::query()->updateOrCreate(
+                [
+                    'name' => $permission['name'],
+                ],
+                $permission
+            );
+        }
     }
 }

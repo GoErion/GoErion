@@ -1,8 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Requests\Company;
 
+use App\Models\Company\Warehouse;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -13,7 +15,10 @@ final class WarehouseLocationRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $warehouse = $this->route('warehouse');
+
+        return $warehouse instanceof Warehouse
+            && $this->user()?->can('view', $warehouse->branch->company) === true;
     }
 
     /**
@@ -24,9 +29,9 @@ final class WarehouseLocationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required','string','max:255',],
-            'code' => ['required', 'string', 'max:50',],
-            'is_active' =>['sometimes','boolean'],
+            'name' => ['required', 'string', 'max:255'],
+            'code' => ['required', 'string', 'max:50'],
+            'is_active' => ['sometimes', 'boolean'],
         ];
     }
 }
