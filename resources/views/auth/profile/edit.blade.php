@@ -16,7 +16,7 @@
 
                     <div>
                         <label for="name" class="block mb-2 font-bold text-slate-200">{{ __('Name') }}</label>
-                        <input id="name" name="name" type="text" value="{{ old('name', auth()->user()->name) }}"
+                        <input id="name" name="name" type="text" autocomplete="name" value="{{ old('name', $user->name) }}"
                             class="w-full rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 text-slate-100 outline-none transition focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 @error('name') border-red-500 @enderror" />
                         @error('name')
                             <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
@@ -26,7 +26,7 @@
                     <div>
                         <label for="email" class="block mb-2 font-bold text-slate-200">{{ __('Email') }}</label>
                         <input id="email" name="email" type="email"
-                            value="{{ old('email', auth()->user()->email) }}"
+                            autocomplete="email" value="{{ old('email', $user->email) }}"
                             class="w-full rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 text-slate-100 outline-none transition focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 @error('email') border-red-500 @enderror" />
                         @error('email')
                             <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
@@ -37,7 +37,7 @@
                         <div>
                             <label for="password"
                                 class="block mb-2 font-bold text-slate-200">{{ __('New Password') }}</label>
-                            <input id="password" name="password" type="password"
+                            <input id="password" name="password" type="password" autocomplete="new-password"
                                 class="w-full rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 text-slate-100 outline-none transition focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 @error('password') border-red-500 @enderror" />
                             @error('password')
                                 <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
@@ -47,7 +47,7 @@
                         <div>
                             <label for="password_confirmation"
                                 class="block mb-2 font-bold text-slate-200">{{ __('Confirm Password') }}</label>
-                            <input id="password_confirmation" name="password_confirmation" type="password"
+                            <input id="password_confirmation" name="password_confirmation" type="password" autocomplete="new-password"
                                 class="w-full rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 text-slate-100 outline-none transition focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20" />
                         </div>
                     </div>
@@ -55,7 +55,7 @@
                     <div>
                         <label for="current_password"
                             class="block mb-2 font-bold text-slate-200">{{ __('Current Password') }}</label>
-                        <input id="current_password" name="current_password" type="password"
+                        <input id="current_password" name="current_password" type="password" autocomplete="current-password"
                             class="w-full rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 text-slate-100 outline-none transition focus:border-pink-500 focus:ring-2 focus:ring-pink-500/20 @error('current_password') border-red-500 @enderror" />
                         @error('current_password')
                             <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
@@ -68,7 +68,7 @@
                             class="w-full rounded-2xl bg-pink-600 px-5 py-3 font-semibold text-white hover:bg-pink-500 sm:w-auto">
                             Save changes
                         </button>
-                        <a href="{{ route('home') }}"
+                        <a href="{{ route('companies.select') }}"
                             class="inline-flex items-center justify-center rounded-2xl border border-slate-800 bg-slate-900 px-5 py-3 text-slate-200 hover:bg-slate-900/90">
                             Back to dashboard
                         </a>
@@ -86,9 +86,9 @@
                         <div>
                             <label for="delete_password"
                                 class="block mb-2 font-bold text-slate-200">{{ __('Password') }}</label>
-                            <input id="delete_password" name="password" type="password"
+                            <input id="delete_password" name="password" type="password" autocomplete="current-password"
                                 class="w-full rounded-2xl border border-slate-800 bg-slate-900 px-4 py-3 text-slate-100 outline-none transition focus:border-red-500 focus:ring-2 focus:ring-red-500/20 @error('password') border-red-500 @enderror" />
-                            @error('password')
+                            @error('password', 'userDeletion')
                                 <p class="mt-2 text-sm text-red-500">{{ $message }}</p>
                             @enderror
                         </div>
@@ -98,16 +98,6 @@
                             Delete account
                         </button>
                     </form>
-                </div>
-            @else
-                <div class="rounded-3xl border border-slate-800 bg-slate-900/80 p-6 text-slate-300">
-                    <p>Please log in to update your profile.</p>
-                    <div class="mt-4 flex flex-wrap gap-3">
-                        <a href="{{ route('login.create') }}"
-                            class="rounded-2xl bg-emerald-700 px-4 py-2 text-white hover:bg-emerald-600">Login</a>
-                        <a href="{{ route('register.create') }}"
-                            class="rounded-2xl border border-slate-800 px-4 py-2 text-slate-200 hover:bg-slate-900">Register</a>
-                    </div>
                 </div>
             @endauth
         </div>
