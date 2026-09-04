@@ -1,30 +1,30 @@
 <?php
 
 use App\Http\Controllers\Auth\Profile\ProfileController;
+use App\Http\Controllers\Company\CompanySelectionController;
 use App\Http\Controllers\Home\HomeController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/',function()
-{
+Route::get('/', function () {
     return view('marketing.index');
 })->name('marketing');
-Route::get('companies/{company}/home',[HomeController::class,'home'])
-    ->name('home');
-//profile
-Route::get('/profile', [ProfileController::class, 'edit'])
-    ->name('profile.edit');
-Route::patch('/profile', [ProfileController::class, 'update'])
-    ->name('profile.update');
-Route::delete('/profile', [ProfileController::class, 'destroy'])
-    ->name('profile.destroy');
-                        //included files
-//auth route
-require __DIR__ . '/auth.php';
-//company route
-require __DIR__ . '/company.php';
-//customer route
-require __DIR__ . '/customer.php';
-//supplier
-require __DIR__ . '/supplier.php';
-//product
-require __DIR__ . '/product.php';
+
+require __DIR__.'/auth.php';
+
+Route::middleware(['auth', 'auth.session', 'verified'])->group(function (): void {
+    Route::get('companies/select', CompanySelectionController::class)->name('companies.select');
+    Route::get('companies/{company}/home', [HomeController::class, 'home'])->name('home');
+
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('profile', [ProfileController::class, 'update'])
+        ->middleware('password.confirm')
+        ->name('profile.update');
+    Route::delete('profile', [ProfileController::class, 'destroy'])
+        ->middleware('password.confirm')
+        ->name('profile.destroy');
+
+    require __DIR__.'/company.php';
+    require __DIR__.'/customer.php';
+    require __DIR__.'/supplier.php';
+    require __DIR__.'/product.php';
+});

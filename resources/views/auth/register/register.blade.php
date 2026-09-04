@@ -1,44 +1,25 @@
- <x-auth>
-    <div class="flex justify-center">
-        <x-slot name="title">
-            Register
-        </x-slot>
-        <div class="w-full max-w-sm border border-slate-900 p-4 rounded-4xl sm:p-6 md:p-8">
-            <form class="space-y-6" action="{{ route('register') }}" method="POST">
-                @csrf
-                <h5 class="text-xl font-bold font-sans">Register to {{ config('app.name') }}</h5>
-                <div>
-                    <label for="name" class="block mb-2 font-bold">{{ __('Name') }}</label>
-                    <input type="text" name="name" id="name" class="bg-transparent border rounded-lg focus:ring-pink-500 focus:border-pink-500 @error('name') border-red-500 @enderror block w-full p-2.5"/>
-                    @error('name')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-                 <div>
-                    <label for="email" class="block mb-2 font-bold">{{ __('Email') }}</label>
-                    <input type="email" name="email" id="email" class="bg-transparent border rounded-lg focus:ring-pink-500 focus:border-pink-500 @error('email') border-red-500 @enderror block w-full p-2.5"/>
-                    @error('email')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-                <div>
-                    <label for="password" class="block mb-2 font-bold">{{ __('Password') }}</label>
-                    <input type="password" name="password" id="password" class="bg-transparent border rounded-lg focus:ring-pink-500 focus:border-pink-500 @error('password') border-red-500 @enderror block w-full p-2.5"/>
-                    @error('password')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-                <div>
-                    <label for="password" class="block mb-2 font-medium">{{__('Confirm Password')}}</label>
-                    <input type="password" name="password_confirmation" id="password_confirm" class="bg-transparent border rounded-lg focus:ring-pink-500 focus:border-pink-500 @error('password_confirm') border-red-500 @enderror block w-full p-2.5"/>
-                    @error('password_confirm')
-                    <span class="text-red-500 text-sm">{{ $message }}</span>
-                    @enderror
-                </div>
-                <button type="submit" class="w-full font-extrabold font-sans border border-pink-700 hover:bg-pink-800 focus:ring-4 focus:outline-none focus:ring-pink-300 rounded-lg text-pink-500 px-5 py-2.5 text-center">{{__('Register')}}</button>
-                <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
-                    Already registered? <a href="{{ route('login.create') }}" class="text-blue-700 hover:underline">{{__('Log In')}}</a>
-                </div>
-            </form>
+<x-auth>
+    <x-slot name="title">Create your account</x-slot>
+
+    <section class="w-full max-w-md rounded-3xl border border-slate-800 bg-slate-950/90 p-6 shadow-2xl shadow-black/30 sm:p-8" aria-labelledby="registration-heading">
+        <div class="grid gap-2 text-center">
+            <h1 id="registration-heading" class="text-2xl font-bold text-white">Create your GoErion account</h1>
+            <p class="text-sm text-slate-400">Start securely, then verify your email before creating a company.</p>
         </div>
+
+        <form class="mt-8 grid gap-5" action="{{ route('register.store') }}" method="POST">
+            @csrf
+            <x-auth.input name="name" label="Full name" autocomplete="name" :value="old('name')" required autofocus />
+            <x-auth.input name="email" type="email" label="Email address" autocomplete="email" :value="old('email')" required />
+            <x-auth.input name="password" type="password" label="Password" autocomplete="new-password" required />
+            <x-auth.input name="password_confirmation" type="password" label="Confirm password" autocomplete="new-password" required />
+
+            <button type="submit" class="rounded-xl bg-pink-600 px-5 py-3 font-semibold text-white transition hover:bg-pink-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-400 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950">Create account</button>
+
+            <p class="text-center text-sm text-slate-400">
+                Already registered?
+                <a href="{{ route('login') }}" class="font-semibold text-pink-300 hover:text-pink-200 focus-visible:outline-none focus-visible:underline">Sign in</a>
+            </p>
+        </form>
+    </section>
 </x-auth>

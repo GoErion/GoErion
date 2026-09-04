@@ -1,5 +1,7 @@
 <?php
 
+use App\Actions\Auth\ResolveAuthenticatedDestination;
+use App\Models\Auth\User;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -12,7 +14,13 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->redirectGuestsTo(fn (): string => route('login'));
+        $middleware->redirectUsersTo(function (Request $request): string {
+            /** @var User $user */
+            $user = $request->user();
+
+            return app(ResolveAuthenticatedDestination::class)->handle($user);
+        });
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

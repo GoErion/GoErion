@@ -3,6 +3,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Company;
 
+use App\Models\Company\Company;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -13,7 +14,10 @@ final class SettingRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $company = $this->route('company');
+
+        return $company instanceof Company
+            && $this->user()?->companies()->whereKey($company->getKey())->exists() === true;
     }
 
     /**
@@ -23,8 +27,7 @@ final class SettingRequest extends FormRequest
      */
     public function rules(): array
     {
-        return 
-        [
+        return [
             'currency' => ['nullable', 'string', 'max:10'],
             'timezone' => ['nullable', 'string', 'max:100'],
             'invoice_prefix' => ['nullable', 'string', 'max:20'],

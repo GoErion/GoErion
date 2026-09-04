@@ -3,46 +3,55 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
 
+use App\Actions\Auth\ResolveAuthenticatedDestination;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
-use App\Models\Company\Company;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\View\View;
 
 final class LoginController extends Controller
 {
     #[Middleware('guest')]
-    public function create()
+    public function create(): View
     {
         return view('auth.login.login');
     }
 
-    #[Middleware('throttle:login')]
-    #[Middleware('guest')]    
-    public function store(LoginRequest $request,Company $company)
+    #[Middleware('guest')]
+    public function store(LoginRequest $request, ResolveAuthenticatedDestination $destination): RedirectResponse
     {
-        //attempt to login
-        if (Auth::attempt($request->only('email', 'password'), $request->boolean('remember')))
-        {
-            $request->session()->regenerate();
+        $request->authenticate();
+        $request->session()->regenerate();
 
-            return redirect()->intended(route('home',$company, absolute: false));
+        $intendedUrl = $request->session()->pull('url.intended');
+
+        if (is_string($intendedUrl) && $this->isSafeIntendedUrl($request, $intendedUrl)) {
+            return redirect($intendedUrl);
         }
-        return redirect()->intended(route('home',$company))->withErrors([
-            'email' => 'These credentials do not match our records.'
-        ])->withInput($request->except('password'));
+
+        return redirect($destination->handle($request->user()));
     }
     
-    //logout action
     #[Middleware('auth')]
-    public function destroy(Request $request)
+    public function destroy(Request $request): RedirectResponse
     {
-      Auth::logout();
+        Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
         return redirect()->route('marketing');
+    }
+
+    private function isSafeIntendedUrl(Request $request, string $url): bool
+    {
+        if (str_starts_with($url, '/') && ! str_starts_with($url, '//')) {
+            return true;
+        }
+
+        return str_starts_with($url, $request->getSchemeAndHttpHost().'/');
     }
 }
