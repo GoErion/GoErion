@@ -23,11 +23,11 @@
                 @csrf
 
                 <div>
-                    <label class="block text-sm text-slate-300">
+                    <label for="name" class="block text-sm text-slate-300">
                         Brand Name
                     </label>
 
-                    <input type="text" name="name" value="{{ old('name') }}" required
+                    <input id="name" type="text" name="name" value="{{ old('name') }}" required
                         class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
 
                     @error('name')
@@ -38,11 +38,11 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm text-slate-300">
+                    <label for="code" class="block text-sm text-slate-300">
                         Brand Code
                     </label>
 
-                    <input type="text" name="code" value="{{ old('code') }}" required
+                    <input id="code" type="text" name="code" value="{{ old('code') }}" required
                         class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
 
                     @error('code')
@@ -52,10 +52,17 @@
                     @enderror
                 </div>
 
-                <button type="submit"
-                    class="w-full rounded-xl bg-emerald-700 px-4 py-3 font-semibold text-white hover:bg-emerald-600">
-                    Create Brand
-                </button>
+                <div class="flex justify-end gap-3">
+                    <a href="{{ route('brand.index', $company) }}"
+                        class="rounded-xl border border-slate-700 px-5 py-3 text-slate-300">
+                        Cancel
+                    </a>
+
+                    <button type="submit"
+                        class="rounded-xl bg-emerald-700 px-5 py-3 font-semibold text-white hover:bg-emerald-600">
+                        Create Brand
+                    </button>
+                </div>
 
             </form>
 

@@ -27,7 +27,7 @@ final class LoginController extends Controller
         {
             $request->session()->regenerate();
 
-            return redirect()->intended(route('home', absolute: false));
+            return redirect()->intended(route('home',$company, absolute: false));
         }
         return redirect()->intended(route('home',$company))->withErrors([
             'email' => 'These credentials do not match our records.'
