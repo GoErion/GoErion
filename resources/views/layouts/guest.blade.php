@@ -1,19 +1,16 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-
     <meta charset="UTF-8">
-    <metaname="viewport" content="width=device-width, initial-scale=1.0">
-        @include('layouts.components.head')
-    @vite(['resources/css/app.css','resources/js/app.js'])
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    @include('layouts.components.head', ['meta' => ['image' => config('marketing.logo')]])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
+    <style>[x-cloak] { display: none !important; }</style>
 </head>
-<body class="bg-slate-950 text-slate-400 bg-center bg-repeat font-bold font-sans antialiased" style="background-image: url({{ asset('img/dots.svg') }})">
-   <div class="container mx-auto">
-       <main>
-           {{ $slot }}
-       </main>
-       @livewireScripts
-   </div>
+<body class="bg-slate-50 font-sans text-slate-900 antialiased">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-4 focus:z-50 focus:rounded-md focus:bg-white focus:p-3 focus:outline-2 focus:outline-amber-800">Skip to content</a>
+    {{ $slot }}
+    @livewireScripts
 </body>
 </html>
