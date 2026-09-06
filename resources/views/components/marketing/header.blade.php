@@ -1,65 +1,19 @@
-<header class="fixed inset-x-0 top-0 z-50 border-b border-slate-900 px-16 mx-8">
-    <nav aria-label="Global" class="flex items-center justify-between p-2 lg:px-8">
-      <div class="flex lg:flex-1">
-        <a href="{{ route('marketing') }}" class="-m-1.5">
-          <img src="{{ asset(config('marketing.logo')) }}" alt="" class="h-26 w-auto not-dark:hidden" />
-        </a>
-      </div>
-      <div class="flex lg:hidden">
-        <button type="button" command="show-modal" commandfor="mobile-menu" class="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700 dark:text-gray-200">
-          <span class="sr-only">Open main menu</span>
-        </button>
-      </div>
-      <div class="hidden lg:flex lg:gap-x-12">
-        <a href="#" class="text-sm/6 font-semibold text-slate-900 dark:text-slate-300">Product</a>
-        <a href="#" class="text-sm/6 font-semibold text-slate-900 dark:text-slate-300">Pricing</a>
-        <a href="#" class="text-sm/6 font-semibold text-slate-900 dark:text-slate-300">About Us</a>
-        <a href="#" class="text-sm/6 font-semibold text-slate-900 dark:text-slate-300">Partners</a>
-        <a href="#" class="text-sm/6 font-semibold text-slate-900 dark:text-slate-300">Customer</a>
-      </div>
-     @guest
-      <div class="hidden lg:flex lg:flex-1 lg:justify-end space-x-3">
-          <a href="{{ route('login') }}" class="text-sm/6 font-semibold border border-pink-800 text-slate-900 dark:text-slate-300 py-2 px-8 rounded-lg">Sign In</a>
-          <a href="{{ route('register') }}" class="text-sm/6 font-semibold bg-pink-800 text-slate-900 dark:text-slate-300 py-2 px-4 rounded-lg">Get Started</a>
-      </div>
-     @endguest
-     @auth
-         <div class="ms-3">
-          <form action="{{ route('logout') }}" method="POST">
-              @csrf
-              <button type="submit" class="text-sm/6 font-semibold bg-pink-800 text-slate-900 dark:text-slate-300 py-2 px-4 rounded-lg">Logout</button>
-          </form>
-         </div>
-     @endauth
-    </nav>
-    <el-dialog>
-      <dialog id="mobile-menu" class="backdrop:bg-transparent lg:hidden">
-        <div tabindex="0" class="fixed inset-0 focus:outline-none">
-          <el-dialog-panel class="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white p-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10 dark:bg-gray-900 dark:sm:ring-gray-100/10">
-            <div class="flex items-center justify-between">
-              <a href="#" class="-m-1.5">
-                <img src="{{ asset(config('marketing.logo')) }}" alt="" class="h-8 w-auto not-dark:hidden" />
-              </a>
-              <button type="button" command="close" commandfor="mobile-menu" class="-m-2.5 rounded-md p-2.5 text-gray-700 dark:text-gray-200">
-                <span class="sr-only">Close menu</span>
-              </button>
-            </div>
-            <div class="mt-6 flow-root">
-              <div class="-my-6 divide-y divide-gray-500/10 dark:divide-white/10">
-                <div class="space-y-2 py-6">
-                  <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">Product</a>
-                  <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">Pricing</a>
-                  <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">About Us</a>
-                  <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">Partners</a>
-                  <a href="#" class="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">Customer</a>
-                </div>
-                <div class="py-6">
-                  <a href="#" class="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">Log in</a>
-                </div>
-              </div>
-            </div>
-          </el-dialog-panel>
+<header x-data="{ open: false }" @keydown.escape.window="if (open) { open = false; $refs.toggle.focus() }" @click.outside="open = false" class="sticky top-0 z-40 border-b border-slate-200 bg-white/95 backdrop-blur-sm">
+    <nav aria-label="Main navigation" class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-20 items-center justify-between gap-4">
+            <a href="{{ route('marketing') }}" class="flex items-center gap-2 rounded-md focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-800">
+                <img src="{{ asset(config('marketing.logo')) }}" alt="GoErion" width="1824" height="1367" class="h-16 w-24 object-contain" />
+                <span aria-hidden="true" class="text-xl font-semibold tracking-tight">GoErion</span>
+            </a>
+            <div class="hidden items-center gap-3 md:flex"><x-marketing.navigation /></div>
+            <button x-cloak x-ref="toggle" type="button" @click="open = !open" aria-controls="marketing-mobile-menu" aria-expanded="false" :aria-expanded="open.toString()" :aria-label="open ? 'Close menu' : 'Open menu'" class="inline-flex size-11 items-center justify-center rounded-md text-slate-800 hover:bg-slate-100 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-amber-800 md:hidden">
+                <svg x-show="!open" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="size-6"><path stroke-linecap="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                <svg x-show="open" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" class="size-6"><path stroke-linecap="round" d="m6 6 12 12M6 18 18 6" /></svg>
+            </button>
         </div>
-      </dialog>
-    </el-dialog>
-  </header>
+        <div id="marketing-mobile-menu" x-cloak x-show="open" @click="if ($event.target.closest('a')) { open = false }" class="grid gap-3 border-t border-slate-200 py-4 md:hidden">
+            <x-marketing.navigation />
+        </div>
+        <noscript><div class="grid gap-3 pb-4 md:hidden"><x-marketing.navigation /></div></noscript>
+    </nav>
+</header>
