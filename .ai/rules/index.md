@@ -5,13 +5,14 @@ Before planning or editing, find the row whose globs match the file's path and r
 | Applies to | Rule file |
 | --- | --- |
 | app/**/Accounting/** | .ai/rules/accounting.md |
+| app/Actions/Company/** | .ai/rules/actions-company.md |
 | app/Actions/** | .ai/rules/actions.md |
 | app/Http/Controllers/Api/** | .ai/rules/api.md |
 | app/**/Company/** | .ai/rules/app-company.md |
 | app/**/Product/** | .ai/rules/app-product.md |
 | app/**, app/**/*.php | .ai/rules/app.md |
 | app/**/Auth/** | .ai/rules/auth.md |
-| app/Models/Company/** | .ai/rules/company.md |
+| app/Models/Company/**, app/Models/Company/CompanyAccessEvent.php | .ai/rules/company.md |
 | app/Console/** | .ai/rules/console.md |
 | app/Http/Controllers/Reporting/** | .ai/rules/controllers-reporting.md |
 | app/Http/Controllers/** | .ai/rules/controllers.md |
@@ -33,6 +34,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Listeners/** | .ai/rules/listeners.md |
 | app/Mail/** | .ai/rules/mail.md |
 | database/migrations/** | .ai/rules/migrations.md |
+| app/Models/Auth/** | .ai/rules/models-auth.md |
 | app/Models/** | .ai/rules/models.md |
 | app/Notifications/** | .ai/rules/notifications.md |
 | app/**/Payments/** | .ai/rules/payments.md |

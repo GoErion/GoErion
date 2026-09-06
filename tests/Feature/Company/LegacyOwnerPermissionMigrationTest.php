@@ -33,7 +33,7 @@ it('upgrades legacy owner roles without changing other role permissions', functi
         'display_name' => 'View Reports',
     ]);
     $ownerRole->permissions()->attach($unrelatedPermission);
-    $legacyOwner->roles()->attach($ownerRole);
+    $legacyOwner->roles()->attach($ownerRole, ['company_id' => $company->id]);
 
     Permission::query()->where('name', 'company.update')->delete();
 

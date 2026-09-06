@@ -1,6 +1,7 @@
 <x-app>
     <x-slot name="title">Create company</x-slot>
     <section class="mx-auto w-full max-w-4xl px-4 py-10 sm:px-6" aria-labelledby="company-create-heading">
+        <x-access-feedback />
         <div class="rounded-3xl border border-slate-800 bg-slate-950/90 p-6 shadow-2xl shadow-black/30 sm:p-8">
             <div class="grid gap-2">
                 <p class="text-sm font-semibold uppercase tracking-widest text-pink-400">Company onboarding</p>

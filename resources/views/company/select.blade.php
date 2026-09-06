@@ -1,6 +1,7 @@
 <x-app>
     <x-slot name="title">Choose a company</x-slot>
     <section class="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6" aria-labelledby="company-selection-heading">
+        <x-access-feedback />
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
             <div class="grid gap-2">
                 <p class="text-sm font-semibold uppercase tracking-widest text-pink-400">Your workspaces</p>

@@ -6,6 +6,7 @@ use App\Models\Auth\Permission;
 use Database\Factories\CompanyFactory;
 use Database\Factories\RoleFactory;
 use Database\Factories\UserFactory;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
@@ -27,14 +28,14 @@ it('requires a same-company role with company update permission', function () {
     $permission = Permission::query()->where('name', 'company.update')->sole();
     $otherCompanyRole = RoleFactory::new()->create(['company_id' => $otherCompany->id]);
     $otherCompanyRole->permissions()->attach($permission);
-    $member->companies()->attach($company);
-    $member->roles()->attach($otherCompanyRole);
+    $member->companies()->attach([$company->id, $otherCompany->id]);
+    $member->roles()->attach($otherCompanyRole, ['company_id' => $otherCompany->id]);
 
     expect($member->can('update', $company))->toBeFalse();
 
     $companyRole = RoleFactory::new()->create(['company_id' => $company->id]);
     $companyRole->permissions()->attach($permission);
-    $member->roles()->attach($companyRole);
+    $member->roles()->attach($companyRole, ['company_id' => $company->id]);
 
     expect($member->can('update', $company))->toBeTrue();
 });
@@ -45,7 +46,7 @@ it('does not allow a non-member role to authorize an update', function () {
     $permission = Permission::query()->where('name', 'company.update')->sole();
     $role = RoleFactory::new()->create(['company_id' => $company->id]);
     $role->permissions()->attach($permission);
-    $user->roles()->attach($role);
+    expect(fn () => $user->roles()->attach($role, ['company_id' => $company->id]))->toThrow(QueryException::class);
 
     expect($user->can('update', $company))->toBeFalse();
 });

@@ -23,3 +23,6 @@ Actions connect derived records to their source, record authorship and lifecycle
 
 ## Tenant-Aware Caching
 Every cache entry containing tenant-owned data includes company context in its key. Do not add caching until invalidation and tenant isolation are clear.
+
+## Serialize account lifecycle before company memberships
+Account deletion and company or membership creation for an existing user must re-resolve and lock the numeric User row inside the transaction before enumerating memberships or creating a company/membership. Account deletion then locks Company rows in ascending numeric ID order. Never add a User-row lock after a Company lock in access Actions; retain transaction retries for database deadlocks.

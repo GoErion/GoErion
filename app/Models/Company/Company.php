@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 #[Fillable(['company_name', 'legal_name', 'registration_number', 'tax_number', 'email', 'phone', 'address'])]
 #[RouteKey('uuid')]
@@ -36,6 +37,16 @@ class Company extends Model
     public function roles(): HasMany
     {
         return $this->hasMany(Role::class);
+    }
+
+    public function ownerRole(): HasOne
+    {
+        return $this->hasOne(Role::class)->where('name', 'owner')->where('is_system', true);
+    }
+
+    public function accessEvents(): HasMany
+    {
+        return $this->hasMany(CompanyAccessEvent::class);
     }
 
     public function branches(): HasMany

@@ -19,6 +19,12 @@
                                         Switch company
                                     </x-sidebar-link>
                                 </li>
+                                @can('viewMembers', $company)
+                                    <li><x-sidebar-link href="{{ route('company.members.index', $company) }}">Members</x-sidebar-link></li>
+                                @endcan
+                                @can('viewRoles', $company)
+                                    <li><x-sidebar-link href="{{ route('company.roles.index', $company) }}">Roles</x-sidebar-link></li>
+                                @endcan
                                 <li>
                                         <x-sidebar-link href="{{ route('product.index',$company) }}">
                                             Product

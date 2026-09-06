@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth\Profile;
 
+use App\Actions\Auth\DeleteAccount;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\Profile\ProfileRequest;
-use Illuminate\Http\Request;
+use DomainException;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
@@ -17,8 +19,9 @@ final class ProfileController extends Controller
 {
     public function edit(Request $request): View
     {
-        return view('auth.profile.edit', ['user' => $request->user(),]);
+        return view('auth.profile.edit', ['user' => $request->user()]);
     }
+
     public function update(ProfileRequest $request): RedirectResponse
     {
         $user = $request->user();
@@ -51,16 +54,22 @@ final class ProfileController extends Controller
         return redirect()->route('profile.edit')->with('status', 'profile-updated');
     }
 
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request, DeleteAccount $action): RedirectResponse
     {
         $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password']
+            'password' => ['required', 'current_password'],
         ]);
         $user = $request->user();
 
-        Auth::logout();
+        try {
+            $action->handle($user);
+        } catch (DomainException $exception) {
+            return back()->withErrors(['password' => $exception->getMessage()], 'userDeletion');
+        }
 
-        $user->delete();
+        /** The deleted identity must not be saved again by remember-token rotation. */
+        $user->setRememberToken(null);
+        Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

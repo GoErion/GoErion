@@ -34,7 +34,7 @@ it('allows a permitted member to edit and update the company profile', function 
     $role = RoleFactory::new()->create(['company_id' => $company->id]);
     $role->permissions()->attach($permission);
     $member->companies()->attach($company);
-    $member->roles()->attach($role);
+    $member->roles()->attach($role, ['company_id' => $company->id]);
 
     $this->actingAs($member)->get(route('company.edit', $company))->assertOk();
     $response = $this->actingAs($member)->patch(route('company.update', $company), [

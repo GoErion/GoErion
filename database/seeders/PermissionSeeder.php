@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
+use App\Enums\CompanyPermission;
 use App\Models\Auth\Permission;
 use Illuminate\Database\Seeder;
 
@@ -14,7 +15,7 @@ class PermissionSeeder extends Seeder
      */
     public function run(): void
     {
-        $permissions = [
+        $legacyPermissions = [
             [
                 'name' => 'company.update',
                 'display_name' => 'Update Company',
@@ -118,6 +119,27 @@ class PermissionSeeder extends Seeder
                 'display_name' => 'View Reports',
             ],
         ];
+        foreach ($legacyPermissions as $permission) {
+            Permission::query()->updateOrCreate(['name' => $permission['name']], [
+                ...$permission, 'assignable_to_custom_roles' => false,
+            ]);
+        }
+
+        $displayNames = [
+            CompanyPermission::Update->value => 'Update Company',
+            CompanyPermission::MembersView->value => 'View Company Members',
+            CompanyPermission::MembersManage->value => 'Manage Company Members',
+            CompanyPermission::RolesView->value => 'View Company Roles',
+            CompanyPermission::RolesManage->value => 'Manage Company Roles',
+            CompanyPermission::InvitationsManage->value => 'Manage Company Invitations',
+            CompanyPermission::OwnershipManage->value => 'Manage Company Ownership',
+        ];
+        $assignable = array_column(CompanyPermission::assignable(), 'value');
+        $permissions = array_map(fn (CompanyPermission $permission): array => [
+            'name' => $permission->value,
+            'display_name' => $displayNames[$permission->value],
+            'assignable_to_custom_roles' => in_array($permission->value, $assignable, true),
+        ], CompanyPermission::cases());
         foreach ($permissions as $permission) {
             Permission::query()->updateOrCreate(
                 [

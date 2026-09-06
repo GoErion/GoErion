@@ -92,7 +92,10 @@ it('derives protected company and owner data on the server', function () {
         ->and($ownerRole->company_id)->toBe($company->id)
         ->and($creator->roles()->whereKey($ownerRole)->exists())->toBeTrue()
         ->and($otherUser->roles()->whereKey($ownerRole)->exists())->toBeFalse()
-        ->and($ownerRole->permissions()->pluck('name')->all())->toBe(['company.update']);
+        ->and($ownerRole->permissions()->pluck('name')->sort()->values()->all())->toBe([
+            'company.invitations.manage', 'company.members.manage', 'company.members.view',
+            'company.ownership.manage', 'company.roles.manage', 'company.roles.view', 'company.update',
+        ]);
 });
 
 it('creates no operational setup records', function () {
@@ -122,7 +125,7 @@ it('rolls back the complete company creation when owner role creation fails', fu
     expect(Company::query()->count())->toBe(0)
         ->and(DB::table('company_user')->count())->toBe(0)
         ->and(Role::query()->count())->toBe(0)
-        ->and(Permission::query()->sole()->is($existingPermission))->toBeTrue()
+        ->and(Permission::query()->whereKey($existingPermission)->exists())->toBeTrue()
         ->and(DB::table('user_roles')->count())->toBe(0)
         ->and(DB::table('role_permissions')->count())->toBe(0);
 });
@@ -142,7 +145,7 @@ it('rolls back company creation when permission creation fails', function () {
     expect(Company::query()->count())->toBe(0)
         ->and(DB::table('company_user')->count())->toBe(0)
         ->and(Role::query()->count())->toBe(0)
-        ->and(Permission::query()->count())->toBe(0)
+        ->and(Permission::query()->count())->toBe(6)
         ->and(DB::table('user_roles')->count())->toBe(0)
         ->and(DB::table('role_permissions')->count())->toBe(0);
 });
@@ -166,7 +169,7 @@ it('rolls back company creation when owner permission attachment fails', functio
     expect(Company::query()->count())->toBe(0)
         ->and(DB::table('company_user')->count())->toBe(0)
         ->and(Role::query()->count())->toBe(0)
-        ->and(Permission::query()->sole()->is($existingPermission))->toBeTrue()
+        ->and(Permission::query()->whereKey($existingPermission)->exists())->toBeTrue()
         ->and(DB::table('user_roles')->count())->toBe(0)
         ->and(DB::table('role_permissions')->count())->toBe(0);
 });
@@ -190,7 +193,7 @@ it('rolls back company creation when creator role assignment fails', function ()
     expect(Company::query()->count())->toBe(0)
         ->and(DB::table('company_user')->count())->toBe(0)
         ->and(Role::query()->count())->toBe(0)
-        ->and(Permission::query()->sole()->is($existingPermission))->toBeTrue()
+        ->and(Permission::query()->whereKey($existingPermission)->exists())->toBeTrue()
         ->and(DB::table('user_roles')->count())->toBe(0)
         ->and(DB::table('role_permissions')->count())->toBe(0);
 });

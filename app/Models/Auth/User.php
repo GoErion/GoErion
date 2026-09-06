@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models\Auth;
 
 use App\Models\Company\Company;
@@ -18,8 +20,8 @@ use Illuminate\Notifications\Notifiable;
 #[RouteKey('uuid')]
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use Notifiable;
     use HasUuid;
+    use Notifiable;
 
     protected $table = 'users';
 
@@ -27,22 +29,41 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(Company::class, 'company_user');
     }
+
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class, 'user_roles');
+        return $this->belongsToMany(Role::class, 'user_roles')
+            ->withPivot(['company_id', 'assigned_by'])
+            ->withTimestamps();
     }
+
+    public function rolesForCompany(Company $company): BelongsToMany
+    {
+        return $this->roles()->where('roles.company_id', $company->getKey());
+    }
+
+    public function hasCompanyPermission(Company $company, string $permission): bool
+    {
+        return $this->companies()->whereKey($company)->exists()
+            && $this->rolesForCompany($company)
+                ->whereHas('permissions', fn ($query) => $query->where('name', $permission))
+                ->exists();
+    }
+
     protected function email(): Attribute
     {
         return Attribute::make(
-            set: fn(string $value) => strtolower($value),
+            set: fn (string $value) => strtolower($value),
         );
     }
+
     protected function name(): Attribute
     {
         return Attribute::make(
-            get: fn(string $value) => ucwords($value),
+            get: fn (string $value) => ucwords($value),
         );
     }
+
     protected function casts(): array
     {
         return [

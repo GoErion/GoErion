@@ -141,7 +141,7 @@ it('redirects an otherwise authorized unverified user away from every company en
     $permission = DB::table('permissions')->where('name', 'company.update')->first();
     $role = RoleFactory::new()->create(['company_id' => $company->id]);
     $role->permissions()->attach($permission->id);
-    $user->roles()->attach($role);
+    $user->roles()->attach($role, ['company_id' => $company->id]);
     $branch = Branch::query()->create([
         'company_id' => $company->id,
         'branch_name' => 'Existing Branch',

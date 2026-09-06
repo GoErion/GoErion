@@ -3,7 +3,7 @@
 <head>
 
     <meta charset="UTF-8">
-    <metaname="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
         @include('layouts.components.head')
     @vite(['resources/css/app.css','resources/js/app.js'])
     @livewireStyles
