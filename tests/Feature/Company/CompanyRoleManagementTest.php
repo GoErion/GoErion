@@ -8,7 +8,6 @@ use App\Actions\Company\DeleteRole;
 use App\Actions\Company\UpdateRole;
 use App\Enums\CompanyAccessEventType;
 use App\Enums\CompanyPermission;
-use App\Enums\InvitationStatus;
 use App\Models\Auth\Permission;
 use App\Models\Company\CompanyInvitation;
 use Database\Factories\CompanyFactory;
@@ -62,15 +61,14 @@ it('rejects deleting a role referenced by a pending invitation', function () {
     $manager->permissions()->attach(Permission::query()->where('name', CompanyPermission::RolesManage->value)->sole());
     $actor->roles()->attach($manager, ['company_id' => $company->id, 'assigned_by' => $actor->id]);
     $role = RoleFactory::new()->create(['company_id' => $company->id]);
-    CompanyInvitation::query()->create([
+    $invitation = CompanyInvitation::query()->create([
         'company_id' => $company->id,
-        'role_id' => $role->id,
         'invited_by' => $actor->id,
         'email' => 'pending@example.com',
-        'token' => 'pending-token',
-        'status' => InvitationStatus::Pending,
+        'token_hash' => hash('sha256', 'pending-token'),
         'expires_at' => now()->addDay(),
     ]);
+    $invitation->roles()->attach($role, ['company_id' => $company->id]);
     expect(fn () => app(DeleteRole::class)->handle($company, $role, $actor))->toThrow(DomainException::class);
 });
 

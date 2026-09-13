@@ -1,11 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Mail;
 
 use App\Models\Company\CompanyInvitation;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
@@ -20,9 +20,7 @@ final class CompanyInvitationMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct(public readonly CompanyInvitation $invitation)
-    {
-    }
+    public function __construct(public readonly CompanyInvitation $invitation) {}
 
     /**
      * Get the message envelope.
@@ -30,7 +28,7 @@ final class CompanyInvitationMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'You have been invited to join' . $this->invitation->company->company_name,
+            subject: 'You have been invited to join'.$this->invitation->company->company_name,
         );
     }
 
@@ -39,9 +37,7 @@ final class CompanyInvitationMail extends Mailable
      */
     public function content(): Content
     {
-        return new Content(
-            view: 'email.company.invitation',
-        );
+        throw new \LogicException('Invitation notification delivery is disabled until Phase 2B2B.');
     }
 
     /**

@@ -13,7 +13,6 @@ use App\Actions\Company\RemoveCompanyMember;
 use App\Actions\Company\UpdateRole;
 use App\Enums\CompanyAccessEventType;
 use App\Enums\CompanyPermission;
-use App\Enums\InvitationStatus;
 use App\Models\Auth\Permission;
 use App\Models\Company\CompanyAccessEvent;
 use App\Models\Company\CompanyInvitation;
@@ -217,11 +216,9 @@ it('nulls deleted role and invitation references without enabling invitation rou
     $role = RoleFactory::new()->create(['company_id' => $company->id]);
     $invitation = CompanyInvitation::query()->create([
         'company_id' => $company->id,
-        'role_id' => $role->id,
         'invited_by' => $actor->id,
         'email' => 'history@example.com',
-        'token' => 'legacy-test-token',
-        'status' => InvitationStatus::Pending,
+        'token_hash' => hash('sha256', 'legacy-test-token'),
         'expires_at' => now()->addDay(),
     ]);
     $event = $company->accessEvents()->create([
@@ -232,7 +229,8 @@ it('nulls deleted role and invitation references without enabling invitation rou
         'metadata' => ['reason' => 'reference-retention-test'],
     ]);
 
-    $invitation->delete();
+    expect(fn () => $invitation->delete())->toThrow(LogicException::class);
+    DB::table('company_invitations')->where('id', $invitation->id)->delete();
     app(DeleteRole::class)->handle($company, $role, $actor);
 
     expect($event->fresh()->role_id)->toBeNull()
@@ -265,11 +263,9 @@ it('keeps secrets and raw invitation tokens out of generated event metadata', fu
     $company->users()->attach([$member->id, $departing->id]);
     CompanyInvitation::query()->create([
         'company_id' => $company->id,
-        'role_id' => $company->ownerRole()->sole()->id,
         'invited_by' => $actor->id,
         'email' => 'pending-history@example.com',
-        'token' => 'raw-invitation-value',
-        'status' => InvitationStatus::Pending,
+        'token_hash' => hash('sha256', 'raw-invitation-value'),
         'expires_at' => now()->addDay(),
     ]);
     $role = app(CreateRole::class)->handle($company, $actor, 'safe-metadata', null, [$permission->id]);

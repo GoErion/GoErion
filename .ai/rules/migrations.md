@@ -1,6 +1,7 @@
 ---
 paths:
   - 'database/migrations/**'
+  - 'database/migrations/*company_invitation*.php'
 ---
 
 # Migrations
@@ -13,3 +14,6 @@ Inspect current models and migrations first. Prefer a new forward migration for 
 
 ## Money Quantity and Currency Storage
 Never use floating-point database types for money. Use the approved decimal or minor-unit strategy with deliberate precision and scale, clear currency context, and independently appropriate quantity precision.
+
+## Preserve company-aware invitation history
+Invitation migrations preserve historical invitation records while removing plaintext credentials. Invitation-role pivots must enforce invitation/company and role/company alignment. Accepted, cancelled, and expired history must not block role deletion permanently. Invitation and access-history dates use the approved UTC-preserving storage strategy, and unsafe rollback limitations must be explicit.

@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[Fillable(['name', 'display_name', 'is_system'])]
 #[RouteKey('uuid')]
@@ -39,9 +38,9 @@ class Role extends Model
         return $this->belongsToMany(Permission::class, 'role_permissions');
     }
 
-    public function invitations(): HasMany
+    public function invitations(): BelongsToMany
     {
-        return $this->hasMany(CompanyInvitation::class);
+        return $this->belongsToMany(CompanyInvitation::class, 'company_invitation_roles', 'role_id', 'invitation_id')->withPivot('company_id')->withTimestamps();
     }
 
     public function isOwner(): bool

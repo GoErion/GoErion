@@ -1,6 +1,7 @@
 ---
 paths:
   - 'app/Actions/Company/**'
+  - 'app/Actions/Company/*Invitation.php'
 ---
 
 # Actions Company
@@ -10,3 +11,6 @@ All owner promotion, demotion, removal, and voluntary departure actions must loc
 
 ## Revalidate access authority under the company lock
 Privileged role, member, and ownership mutations lock the route Company row before rechecking current membership and the existing policy ability with database-backed permission queries. Do not trust loaded role relationships or pre-lock Form Request authorization. Rejection must leave access and history unchanged; self-service departure rechecks membership and last-owner state under the same Company lock.
+
+## Secure company invitation lifecycle
+Company invitation creation, resend, cancellation, and acceptance are transactional lifecycle operations. One active invitation per Company and normalized email is enforced through the nullable unique active key. Lifecycle changes, company-aware role validation, and append-only access events must commit together. Invitation management revalidates current authority after locking the Company.

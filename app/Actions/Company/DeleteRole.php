@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Actions\Company;
 
 use App\Enums\CompanyAccessEventType;
-use App\Enums\InvitationStatus;
 use App\Models\Auth\Role;
 use App\Models\Auth\User;
 use App\Models\Company\Company;
@@ -27,7 +26,8 @@ final readonly class DeleteRole
             if ($role->users()->exists()) {
                 throw new DomainException('Remove this role from all members before deleting it.');
             }
-            if ($role->invitations()->where('status', InvitationStatus::Pending)->exists()) {
+            if ($role->invitations()->where('company_invitations.company_id', $company->id)->wherePivot('company_id', $company->id)
+                ->whereNull('accepted_at')->whereNull('cancelled_at')->where('expires_at', '>', now('UTC'))->exists()) {
                 throw new DomainException('Cancel pending invitations using this role before deleting it.');
             }
             $metadata = ['role_uuid' => $role->uuid, 'name' => $role->name];
