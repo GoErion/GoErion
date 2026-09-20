@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Controllers\Auth;
@@ -6,6 +7,7 @@ namespace App\Http\Controllers\Auth;
 use App\Actions\Auth\ResolveAuthenticatedDestination;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
+use App\Services\Company\InvitationClaim;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Attributes\Controllers\Middleware;
@@ -34,14 +36,23 @@ final class LoginController extends Controller
 
         return redirect($destination->handle($request->user()));
     }
-    
+
     #[Middleware('auth')]
     public function destroy(Request $request): RedirectResponse
     {
+        $key = InvitationClaim::SESSION_KEY;
+        $claim = $request->boolean('return_to_invitation') ? $request->session()->get($key) : null;
+        $validClaim = app(InvitationClaim::class)->find($claim);
         Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        if ($validClaim) {
+            $request->session()->put($key, $claim);
+
+            return redirect()->route('invitations.review');
+        }
 
         return redirect()->route('marketing');
     }

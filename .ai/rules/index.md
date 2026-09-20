@@ -14,6 +14,8 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/**/Auth/** | .ai/rules/auth.md |
 | app/Models/Company/**, app/Models/Company/CompanyAccessEvent.php | .ai/rules/company.md |
 | app/Console/** | .ai/rules/console.md |
+| app/Actions/Auth/ResolveAuthenticatedDestination.php, app/Http/Controllers/Auth/LoginController.php, app/Http/Controllers/Auth/RegisterController.php, app/Http/Controllers/Auth/EmailVerificationPromptController.php, app/Http/Controllers/Auth/VerifyEmailController.php, app/Http/Controllers/Auth/EmailVerificationNotificationController.php | .ai/rules/controllers-auth.md |
+| app/Http/Middleware/ProtectInvitationPrivacy.php, app/Http/Controllers/Company/InvitationClaimController.php, bootstrap/app.php, routes/web.php | .ai/rules/controllers-company.md |
 | app/Http/Controllers/Reporting/** | .ai/rules/controllers-reporting.md |
 | app/Http/Controllers/** | .ai/rules/controllers.md |
 | app/**/Customer/** | .ai/rules/customer.md |
@@ -32,6 +34,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/**/Inventory/** | .ai/rules/inventory.md |
 | app/Jobs/** | .ai/rules/jobs.md |
 | app/Listeners/** | .ai/rules/listeners.md |
+| app/Services/Company/SendCompanyInvitation.php, app/Mail/CompanyInvitationMail.php, app/Actions/Company/InvitationDelivery.php | .ai/rules/mail-actions-company.md |
 | app/Mail/** | .ai/rules/mail.md |
 | database/migrations/**, database/migrations/*company_invitation*.php | .ai/rules/migrations.md |
 | app/Models/Auth/** | .ai/rules/models-auth.md |

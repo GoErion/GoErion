@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\Profile\ProfileController;
 use App\Http\Controllers\Company\CompanySelectionController;
+use App\Http\Controllers\Company\InvitationClaimController;
 use App\Http\Controllers\Home\HomeController;
 use Illuminate\Support\Facades\Route;
 
@@ -10,6 +11,10 @@ Route::get('/', function () {
 })->name('marketing');
 
 require __DIR__.'/auth.php';
+
+Route::get('invitations/entry', [InvitationClaimController::class, 'entry'])->middleware('throttle:invitation-entry')->name('invitations.entry');
+Route::get('invitations/review', [InvitationClaimController::class, 'review'])->name('invitations.review');
+Route::post('invitations/accept', [InvitationClaimController::class, 'accept'])->middleware(['auth', 'auth.session', 'verified', 'throttle:invitation-accept'])->name('invitations.accept');
 
 Route::middleware(['auth', 'auth.session', 'verified'])->group(function (): void {
     Route::get('companies/select', CompanySelectionController::class)->name('companies.select');

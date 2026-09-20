@@ -63,6 +63,7 @@ try {
             'resend' => app(ResendInvitation::class)->handle($company, $invitation, $actor),
             'cancel' => app(CancelInvitation::class)->handle($company, $invitation, $actor),
             'accept', 'accept-boundary' => app(AcceptInvitation::class)->handle($input['token'], $recipient),
+            'accept-claim' => app(AcceptInvitation::class)->handleClaim($input['digest'], $recipient),
             'rename-role' => app(UpdateRole::class)->handle($company, Role::findOrFail($input['roles'][0]), $actor, 'renamed-invitation-role', null, []),
             'delete-role' => app(DeleteRole::class)->handle($company, Role::findOrFail($input['roles'][0]), $actor),
             'delete-account' => app(DeleteAccount::class)->handle($recipient),

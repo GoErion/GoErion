@@ -20,7 +20,22 @@ final readonly class AcceptInvitation
     {
         $digest = $this->tokens->digest($rawToken);
 
-        return DB::transaction(function () use ($digest, $user): Company {
+        return $this->acceptDigest($digest, $user, true);
+    }
+
+    /** Accept a server-held claim without permitting an HTTP replay. */
+    public function handleClaim(#[\SensitiveParameter] string $digest, User $user): Company
+    {
+        if (! preg_match('/\A[a-f0-9]{64}\z/', $digest)) {
+            InvitationRules::unavailable();
+        }
+
+        return $this->acceptDigest($digest, $user, false);
+    }
+
+    private function acceptDigest(#[\SensitiveParameter] string $digest, User $user, bool $allowReplay): Company
+    {
+        return DB::transaction(function () use ($digest, $user, $allowReplay): Company {
             $user = User::query()->whereKey($user->getKey())->lockForUpdate()->first();
             if (! $user || ! $user->hasVerifiedEmail()) {
                 InvitationRules::unavailable();
@@ -36,7 +51,7 @@ final readonly class AcceptInvitation
                 InvitationRules::unavailable();
             }
             $member = DB::table('company_user')->where(['company_id' => $company->id, 'user_id' => $user->id])->lockForUpdate()->first();
-            if ($invitation->accepted_at && $invitation->accepted_by === $user->id && $member) {
+            if ($allowReplay && $invitation->accepted_at && $invitation->accepted_by === $user->id && $member) {
                 return $company;
             }
             if (! $invitation->isPending() || $member) {

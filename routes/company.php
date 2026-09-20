@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Company\BranchController;
 use App\Http\Controllers\Company\CompanyController;
+use App\Http\Controllers\Company\CompanyInvitationController;
 use App\Http\Controllers\Company\CompanyMemberController;
 use App\Http\Controllers\Company\CompanyMembershipController;
 use App\Http\Controllers\Company\CompanyOwnershipController;
@@ -61,3 +62,11 @@ Route::get('company/{company}/settings/edit', [SettingController::class, 'edit']
     ->name('settings.edit');
 Route::put('company/{company}/settings', [SettingController::class, 'update'])
     ->name('settings');
+
+Route::controller(CompanyInvitationController::class)->prefix('company/{company}/invitations')->name('company.invitations.')->group(function (): void {
+    Route::get('/', 'index')->name('index');
+    Route::get('/create', 'create')->name('create');
+    Route::post('/', 'store')->middleware('throttle:invitation-create')->name('store');
+    Route::post('/{invitationUuid}/resend', 'resend')->middleware('throttle:invitation-resend')->name('resend');
+    Route::delete('/{invitationUuid}', 'cancel')->name('cancel');
+});

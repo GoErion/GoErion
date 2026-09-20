@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Actions\Company\AcceptInvitation;
 use App\Actions\Company\CreateCompany;
 use App\Actions\Company\CreateInvitation;
 use App\Enums\CompanyAccessEventType;
@@ -32,7 +33,11 @@ it('serializes invitation lifecycle using independent MySQL connections', functi
         $delivery = app(CreateInvitation::class)->handle($company, $actor, $recipient->email, $roles->modelKeys());
         $invitation = $delivery->invitation;
         $payload['invitation'] = $invitation->id;
-        $payload['token'] = $delivery->takeToken();
+        if ($firstOperation === 'accept-claim') {
+            $payload['digest'] = hash('sha256', $delivery->takeToken());
+        } else {
+            $payload['token'] = $delivery->takeToken();
+        }
         $payload['expiry'] = $invitation->expires_at->toDateTimeString();
     }
     $secondPayload = $payload;
@@ -122,7 +127,7 @@ it('serializes invitation lifecycle using independent MySQL connections', functi
             'hold-company', 'delete-account' => [],
             'delete-role' => [CompanyAccessEventType::InvitationAccepted, CompanyAccessEventType::MemberJoined],
             'rename-role' => [CompanyAccessEventType::RoleUpdated, CompanyAccessEventType::InvitationAccepted, CompanyAccessEventType::MemberJoined],
-            'accept' => $secondOperation === 'delete-account'
+            'accept', 'accept-claim' => $secondOperation === 'delete-account'
                 ? [CompanyAccessEventType::InvitationAccepted, CompanyAccessEventType::MemberJoined, CompanyAccessEventType::MemberLeft]
                 : [CompanyAccessEventType::InvitationAccepted, CompanyAccessEventType::MemberJoined],
         };
@@ -130,10 +135,16 @@ it('serializes invitation lifecycle using independent MySQL connections', functi
         if ($firstOperation === 'rename-role') {
             expect($company->accessEvents()->where('event_type', CompanyAccessEventType::InvitationAccepted)->sole()->metadata['roles'][0]['name'])->toBe('renamed-invitation-role');
         }
-        $accepted = in_array($firstOperation, ['accept', 'delete-role', 'rename-role'], true);
+        $accepted = in_array($firstOperation, ['accept', 'accept-claim', 'delete-role', 'rename-role'], true);
         $deleted = $firstOperation === 'delete-account' || $secondOperation === 'delete-account';
         expect($company->users()->whereKey($recipient)->exists())->toBe($accepted && ! $deleted);
         expect(DB::table('user_roles')->where(['company_id' => $company->id, 'user_id' => $recipient->id])->count())->toBe($accepted && ! $deleted ? 2 : 0);
+        if ($firstOperation === 'accept-claim') {
+            expect(fn () => app(AcceptInvitation::class)->handleClaim($payload['digest'], $recipient))->toThrow(DomainException::class);
+            expect(DB::table('company_user')->where(['company_id' => $company->id, 'user_id' => $recipient->id])->count())->toBe(1);
+            expect(DB::table('user_roles')->where(['company_id' => $company->id, 'user_id' => $recipient->id])->orderBy('role_id')->pluck('role_id')->all())->toBe($roles->modelKeys());
+            expect($company->accessEvents()->count())->toBe($initialEvents + 2);
+        }
         expect($company->ownerRole()->sole()->users()->pluck('users.id')->all())->toBe([$actor->id]);
         expect($company->invitations()->whereNotNull('active_key')->count())->toBeLessThanOrEqual(1);
         if ($invitation) {
@@ -161,6 +172,7 @@ it('serializes invitation lifecycle using independent MySQL connections', functi
     'accept before resend' => ['accept', 'resend', 'companies', 'succeeded', 'rejected'],
     'resend before accept' => ['resend', 'accept', 'companies', 'succeeded', 'rejected'],
     'two accepts' => ['accept', 'accept', 'users', 'succeeded', 'succeeded'],
+    'two digest claims reject replay' => ['accept-claim', 'accept-claim', 'users', 'succeeded', 'rejected'],
     'role rename before accept records current history' => ['rename-role', 'accept', 'companies', 'succeeded', 'succeeded'],
     'role deletion rejected before accept' => ['delete-role', 'accept', 'companies', 'rejected', 'succeeded'],
     'role deletion versus accept' => ['accept', 'delete-role', 'companies', 'succeeded', 'rejected'],

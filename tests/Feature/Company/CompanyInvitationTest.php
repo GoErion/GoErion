@@ -23,7 +23,6 @@ use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
 uses(RefreshDatabase::class);
@@ -282,14 +281,13 @@ it('retains invitations when the inviter account is deleted', function () {
     expect($company->ownerRole()->sole()->users()->pluck('users.id')->all())->toBe([$replacement->id]);
 });
 
-it('rejects Eloquent physical deletion and keeps invitation HTTP routes disabled', function () {
+it('rejects Eloquent physical deletion', function () {
     [$company, $actor, $roles, $recipient] = invitationCompany();
     $invitation = app(CreateInvitation::class)->handle($company, $actor, $recipient->email, $roles->modelKeys())->invitation;
     foreach ([fn () => $invitation->delete(), fn () => $invitation->deleteQuietly(), fn () => $invitation->forceDelete(), fn () => CompanyInvitation::destroy($invitation->id), fn () => $company->invitations()->delete(), fn () => CompanyInvitation::query()->forceDelete(), fn () => CompanyInvitation::query()->truncate()] as $delete) {
         expect($delete)->toThrow(LogicException::class);
     }
     expect($invitation->fresh())->not->toBeNull();
-    expect(collect(Route::getRoutes())->filter(fn ($route) => str_contains(strtolower($route->uri().' '.$route->getName()), 'invitation')))->toBeEmpty();
 });
 
 it('revalidates recipient and roles when resending', function (string $kind) {

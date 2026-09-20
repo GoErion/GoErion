@@ -22,6 +22,9 @@
                                 @can('viewMembers', $company)
                                     <li><x-sidebar-link href="{{ route('company.members.index', $company) }}">Members</x-sidebar-link></li>
                                 @endcan
+                                @can('inviteMembers', $company)
+                                    <li><x-sidebar-link href="{{ route('company.invitations.index', $company) }}">Invitations</x-sidebar-link></li>
+                                @endcan
                                 @can('viewRoles', $company)
                                     <li><x-sidebar-link href="{{ route('company.roles.index', $company) }}">Roles</x-sidebar-link></li>
                                 @endcan

@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Actions\Auth;
 
 use App\Models\Auth\User;
+use App\Services\Company\InvitationClaim;
 
 final readonly class ResolveAuthenticatedDestination
 {
@@ -11,6 +13,14 @@ final readonly class ResolveAuthenticatedDestination
     {
         if (! $user->hasVerifiedEmail()) {
             return route('verification.notice');
+        }
+
+        $key = InvitationClaim::SESSION_KEY;
+        if (session()->has($key)) {
+            if (app(InvitationClaim::class)->find(session($key))) {
+                return route('invitations.review');
+            }
+            session()->forget($key);
         }
 
         $companies = $user->companies()

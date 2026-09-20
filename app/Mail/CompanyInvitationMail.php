@@ -5,48 +5,37 @@ declare(strict_types=1);
 namespace App\Mail;
 
 use App\Models\Company\CompanyInvitation;
-use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
-use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Queue\SerializesModels;
+use LogicException;
 
-final class CompanyInvitationMail extends Mailable
+final class CompanyInvitationMail extends Mailable implements \JsonSerializable
 {
-    use Queueable;
-    use SerializesModels;
+    public function __construct(public readonly CompanyInvitation $invitation, #[\SensitiveParameter] private readonly string $entryUrl) {}
 
-    /**
-     * Create a new message instance.
-     */
-    public function __construct(public readonly CompanyInvitation $invitation) {}
-
-    /**
-     * Get the message envelope.
-     */
     public function envelope(): Envelope
     {
-        return new Envelope(
-            subject: 'You have been invited to join'.$this->invitation->company->company_name,
-        );
+        return new Envelope(subject: 'Join '.$this->invitation->company->company_name.' on GoErion');
     }
 
-    /**
-     * Get the message content definition.
-     */
     public function content(): Content
     {
-        throw new \LogicException('Invitation notification delivery is disabled until Phase 2B2B.');
+        return new Content(markdown: 'email.company.invitation', with: ['entryUrl' => $this->entryUrl]);
     }
 
-    /**
-     * Get the attachments for the message.
-     *
-     * @return array<int, Attachment>
-     */
-    public function attachments(): array
+    public function __serialize(): array
     {
-        return [];
+        throw new LogicException('Invitation mail must be sent synchronously.');
+    }
+
+    public function jsonSerialize(): never
+    {
+        throw new LogicException('Invitation mail must remain in memory.');
+    }
+
+    public function __debugInfo(): array
+    {
+        return ['invitation_uuid' => $this->invitation->uuid];
     }
 }

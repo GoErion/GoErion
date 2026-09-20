@@ -1,32 +1,28 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Requests\Company;
 
-use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Foundation\Http\FormRequest;
+use App\Models\Company\CompanyInvitation;
 use Illuminate\Validation\Rule;
 
-final class CompanyInvitationRequest extends FormRequest
+final class CompanyInvitationRequest extends ManageInvitationRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
+    protected function prepareForValidation(): void
     {
-        return true;
+        if (is_string($this->input('email'))) {
+            $this->merge(['email' => CompanyInvitation::normalizeEmail($this->input('email'))]);
+        }
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
+    /** @return array<string, mixed> */
     public function rules(): array
     {
         return [
-            'email' => ['required','email','max:255'],
-            'role_id' => ['required','integer',Rule::exists('roles','id')->where(fn ($query) => $query->where('company_id',$this->route('company')->id)),],
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'role_ids' => ['required', 'array', 'min:1'],
+            'role_ids.*' => ['required', 'integer', 'distinct', Rule::exists('roles', 'id')->where('company_id', $this->route('company')->id)->where('is_system', 0)->whereNot('name', 'owner')],
         ];
     }
 }

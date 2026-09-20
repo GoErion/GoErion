@@ -9,6 +9,9 @@
                 <a href="{{ route('company.edit', $company) }}" class="inline-flex justify-center rounded-xl bg-pink-600 px-5 py-3 font-semibold text-white transition hover:bg-pink-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink-500">Edit company profile</a>
             @endcan
         </div>
+        @can('inviteMembers', $company)
+            <a href="{{ route('company.invitations.index', $company) }}" class="rounded-xl border border-slate-700 px-5 py-3 font-semibold text-pink-300 hover:bg-slate-900">Manage company invitations →</a>
+        @endcan
         <dl class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
             @foreach (['Legal name' => $company->legal_name, 'Registration number' => $company->registration_number, 'Tax number' => $company->tax_number, 'Email' => $company->email, 'Phone' => $company->phone, 'Address' => $company->address] as $label => $value)
                 <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5"><dt class="text-xs font-semibold uppercase tracking-wider text-slate-500">{{ $label }}</dt><dd class="mt-2 break-words text-slate-100">{{ $value ?: 'Not provided' }}</dd></div>

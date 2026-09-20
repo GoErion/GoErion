@@ -127,11 +127,21 @@ it('creates a warehouse location for the derived company and redirects to its ov
         ->and($location->warehouse->branch->company_id)->toBe($company->id);
 });
 
-it('does not expose invitation routes during phase 2a', function () {
+it('exposes only the approved invitation entry review acceptance and company management routes', function () {
     expect(Route::has('invitations.create'))->toBeFalse()
         ->and(Route::has('invitations.store'))->toBeFalse()
-        ->and(Route::has('invitations.accept'))->toBeFalse()
+        ->and(Route::getRoutes()->getByName('invitations.accept')->methods())->toBe(['POST'])
         ->and(Route::has('invitations.confirm'))->toBeFalse();
+    $routes = collect(Route::getRoutes())->filter(fn ($route) => str_contains($route->getName() ?? '', 'invitations.'));
+    expect($routes->map(fn ($route) => $route->getName())->sort()->values()->all())->toBe([
+        'company.invitations.cancel', 'company.invitations.create', 'company.invitations.index', 'company.invitations.resend', 'company.invitations.store',
+        'invitations.accept', 'invitations.entry', 'invitations.review',
+    ]);
+    foreach ($routes as $route) {
+        if (str_starts_with($route->getName(), 'company.') || $route->getName() === 'invitations.accept') {
+            expect($route->gatherMiddleware())->toContain('auth', 'auth.session', 'verified');
+        }
+    }
 });
 
 it('redirects an otherwise authorized unverified user away from every company endpoint', function () {
