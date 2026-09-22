@@ -8,6 +8,7 @@ use App\Actions\Company\DeleteRole;
 use App\Actions\Company\UpdateRole;
 use App\Enums\CompanyAccessEventType;
 use App\Enums\CompanyPermission;
+use App\Enums\CustomerPermission;
 use App\Models\Auth\Permission;
 use App\Models\Company\CompanyInvitation;
 use Database\Factories\CompanyFactory;
@@ -106,6 +107,21 @@ it('accepts only approved permissions whose assignable flag is enabled', functio
     $role = app(CreateRole::class)->handle($company, $actor, 'approved-role', null, [$approved->id]);
 
     expect($role->permissions()->pluck('name')->all())->toBe([CompanyPermission::MembersView->value]);
+});
+
+it('allows every canonical customer permission on a custom role', function () {
+    $owner = UserFactory::new()->create();
+    $company = app(CreateCompany::class)->handle(['company_name' => 'Customer Permissions'], $owner);
+    $permissions = Permission::query()->whereIn('name', array_column(CustomerPermission::cases(), 'value'))->get();
+
+    $this->actingAs($owner)->post(route('company.roles.store', $company), [
+        'name' => 'customer-manager',
+        'permission_ids' => $permissions->pluck('id')->all(),
+    ])->assertSessionHasNoErrors()->assertRedirectToRoute('company.roles.index', $company);
+
+    $role = $company->roles()->where('name', 'customer-manager')->sole();
+    expect($role->permissions()->pluck('name')->all())
+        ->toEqualCanonicalizing(array_column(CustomerPermission::cases(), 'value'));
 });
 
 it('rejects an approved permission when its assignable flag is disabled', function () {
@@ -257,7 +273,8 @@ it('loads only enabled canonical permissions for create and edit forms', functio
     PermissionFactory::new()->create(['name' => 'outside.company', 'assignable_to_custom_roles' => true]);
     Permission::query()->where('name', CompanyPermission::OwnershipManage->value)->update(['assignable_to_custom_roles' => true]);
     Permission::query()->where('name', CompanyPermission::MembersView->value)->update(['assignable_to_custom_roles' => false]);
-    $expected = ['company.invitations.manage', 'company.members.manage', 'company.roles.manage', 'company.roles.view', 'company.update'];
+    $expected = ['company.invitations.manage', 'company.members.manage', 'company.roles.manage', 'company.roles.view', 'company.update',
+        'customers.archive', 'customers.create', 'customers.credit.manage', 'customers.groups.manage', 'customers.update', 'customers.view'];
 
     foreach ([route('company.roles.create', $company), route('company.roles.edit', [$company, $role->uuid])] as $url) {
         $this->actingAs($owner)->get($url)->assertOk()->assertViewHas('permissions', fn ($permissions): bool => $permissions->pluck('name')->sort()->values()->all() === $expected);

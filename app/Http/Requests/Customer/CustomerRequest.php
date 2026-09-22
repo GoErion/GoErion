@@ -1,36 +1,48 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Requests\Customer;
 
-use Illuminate\Contracts\Validation\ValidationRule;
+use App\Models\Company\Company;
+use App\Models\Customer\Customer;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 final class CustomerRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
+    protected function prepareForValidation(): void
     {
-        return true;
+        if ($this->has('email')) {
+            $this->merge(['email' => filled($this->input('email')) ? Str::lower(trim((string) $this->input('email'))) : null]);
+        }
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
+    public function authorize(): bool
+    {
+        $company = $this->route('company');
+
+        return $company instanceof Company && $this->user()?->can('create', [Customer::class, $company]) === true;
+    }
+
     public function rules(): array
     {
+        $company = $this->route('company');
+        $canManageCredit = $this->user()?->can('manageCredit', [Customer::class, $company]) === true;
+
         return [
-            'name' => ['required','string','max:255'],
-            'code' => ['required', 'string', 'max:50'],
+            'name' => ['required', 'string', 'max:255'],
             'email' => ['nullable', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:50'],
-            'credit_limit' => ['nullable','numeric','min:0'],
-            'payment_terms_days' => ['nullable','integer','min:0'],
-            'is_active' =>['nullable','boolean']
+            'tax_pin' => ['nullable', 'string', 'max:50'],
+            'customer_group_id' => ['nullable', 'integer', Rule::exists('customer_groups', 'id')
+                ->where('company_id', $company->getKey())->where('is_active', true)],
+            'credit_limit' => [$canManageCredit ? 'nullable' : 'prohibited', 'string', 'regex:/^\d{1,15}(?:\.\d{1,4})?$/'],
+            'payment_terms_days' => [$canManageCredit ? 'nullable' : 'prohibited', 'integer', 'between:0,3650'],
+            'code' => ['prohibited'],
+            'company_id' => ['prohibited'],
+            'is_active' => ['prohibited'],
         ];
     }
 }

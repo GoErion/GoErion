@@ -17,3 +17,6 @@ Never use floating-point database types for money. Use the approved decimal or m
 
 ## Preserve company-aware invitation history
 Invitation migrations preserve historical invitation records while removing plaintext credentials. Invitation-role pivots must enforce invitation/company and role/company alignment. Accepted, cancelled, and expired history must not block role deletion permanently. Invitation and access-history dates use the approved UTC-preserving storage strategy, and unsafe rollback limitations must be explicit.
+
+## Customer group membership uses composite tenant keys
+Customer group memberships have one row per Customer. Both Customer and group references include company_id in composite foreign keys; migration preflight rejects legacy cross-company assignments before DDL. Preserve membership on migration rollback and preserve Customers when a group is deleted.

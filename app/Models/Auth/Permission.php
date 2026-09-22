@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Models\Auth;
 
 use App\Enums\CompanyPermission;
+use App\Enums\CustomerPermission;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
@@ -29,10 +30,16 @@ class Permission extends Model
     {
         return $query
             ->where('assignable_to_custom_roles', true)
-            ->whereIn('name', array_map(
-                static fn (CompanyPermission $permission): string => $permission->value,
-                CompanyPermission::assignable(),
-            ));
+            ->whereIn('name', self::assignableNames());
+    }
+
+    /** @return list<string> */
+    public static function assignableNames(): array
+    {
+        return array_merge(
+            array_column(CompanyPermission::assignable(), 'value'),
+            array_column(CustomerPermission::cases(), 'value'),
+        );
     }
 
     protected function casts(): array

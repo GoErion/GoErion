@@ -1,8 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Requests\Customer;
 
+use App\Models\Company\Company;
+use App\Models\Customer\Customer;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
@@ -14,7 +17,9 @@ final class CustomerAddressRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return true;
+        $company = $this->route('company');
+
+        return $company instanceof Company && $this->user()?->can('update', [Customer::class, $company]) === true;
     }
 
     /**
@@ -25,13 +30,14 @@ final class CustomerAddressRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'type' => ['required','string',Rule::in(['billing','shipping','other',])],
-            'line_1' => ['required','string','max:255'],
-            'line_2'  => ['nullable', 'string', 'max:255'],
-            'city'  => ['nullable', 'string', 'max:100'],
-            'postal_code'  => ['nullable', 'string', 'max:30'],
-            'country'  => ['nullable', 'string', 'max:100'],
-            'is_default' =>['nullable','boolean'],
+            'type' => ['required', 'string', Rule::in(['billing', 'shipping', 'other'])],
+            'line_1' => ['required', 'string', 'max:255'],
+            'line_2' => ['nullable', 'string', 'max:255'],
+            'city' => ['nullable', 'string', 'max:100'],
+            'postal_code' => ['nullable', 'string', 'max:30'],
+            'country' => ['nullable', 'string', 'max:100'],
+            'is_default' => ['nullable', 'boolean'],
+            'customer_id' => ['prohibited'],
         ];
     }
 }

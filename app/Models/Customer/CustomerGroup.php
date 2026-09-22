@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models\Customer;
@@ -8,19 +9,24 @@ use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-#[Fillable(['company_id','name','code','description','is_active',])]
+#[Fillable(['company_id', 'name', 'code', 'description', 'is_active'])]
 #[RouteKey('uuid')]
 class CustomerGroup extends Model
 {
     use HasUuid;
+
     protected $table = 'customer_groups';
 
-    public function customers()
+    public function customers(): BelongsToMany
     {
-        return $this->hasMany(Customer::class);
+        return $this->belongsToMany(Customer::class, 'customer_group_memberships', 'customer_group_id', 'customer_id')
+            ->withPivot('company_id');
     }
-    public function company()
+
+    public function company(): BelongsTo
     {
         return $this->belongsTo(Company::class);
     }

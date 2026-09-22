@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Company;
 
-use App\Enums\CompanyPermission;
+use App\Models\Auth\Permission;
 use App\Models\Company\Company;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
@@ -40,7 +40,7 @@ final class StoreRoleRequest extends FormRequest
             'name' => ['required', 'string', 'max:255', 'not_in:owner', Rule::unique('roles', 'name')->where(fn ($query) => $query->where('company_id', $company->id))],
             'display_name' => ['nullable', 'string', 'max:255'],
             'permission_ids' => ['present', 'array'],
-            'permission_ids.*' => ['integer', 'distinct', Rule::exists('permissions', 'id')->where(fn ($query) => $query->where('assignable_to_custom_roles', true)->whereIn('name', array_column(CompanyPermission::assignable(), 'value')))],
+            'permission_ids.*' => ['integer', 'distinct', Rule::exists('permissions', 'id')->where(fn ($query) => $query->where('assignable_to_custom_roles', true)->whereIn('name', Permission::assignableNames()))],
         ];
     }
 }

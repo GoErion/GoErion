@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Actions\Company;
 
 use App\Enums\CompanyPermission;
+use App\Enums\CustomerPermission;
 use App\Models\Auth\Permission;
 use App\Models\Auth\User;
 use App\Models\Company\Company;
@@ -28,6 +29,12 @@ final readonly class CreateCompany
                 ['name' => $permission->value],
                 ['display_name' => $permission->displayName(), 'assignable_to_custom_roles' => $permission->isAssignableToCustomRoles()],
             )->getKey());
+            $permissionIds = $permissionIds->merge(collect(CustomerPermission::cases())->map(
+                fn (CustomerPermission $permission) => Permission::query()->firstOrCreate(
+                    ['name' => $permission->value],
+                    ['display_name' => $permission->displayName(), 'assignable_to_custom_roles' => true],
+                )->getKey(),
+            ));
             $ownerRole->permissions()->syncWithoutDetaching($permissionIds);
             $creator->roles()->attach($ownerRole->getKey(), [
                 'company_id' => $company->getKey(), 'assigned_by' => $creator->getKey(),
