@@ -1,33 +1,31 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Requests\Supplier;
 
-use Illuminate\Contracts\Validation\ValidationRule;
+use App\Models\Company\Company;
+use App\Models\Supplier\Supplier;
+use App\Services\Supplier\SupplierInput;
 use Illuminate\Foundation\Http\FormRequest;
 
 final class SupplierContactRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return true;
+        $company = $this->route('company');
+
+        return $company instanceof Company && $this->user()?->can('update', [Supplier::class, $company]) === true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge(SupplierInput::normalize($this->all()));
+    }
+
+    /** @return array<string, array<mixed>> */
     public function rules(): array
     {
-        return [
-            'name' => ['required','string','max:255',],
-            'email' => ['nullable','email','max:255',],
-            'phone' => ['nullable','string','max:50',],
-            'position' => ['nullable','string','max:100',],
-        ];
+        return SupplierInput::contact();
     }
 }

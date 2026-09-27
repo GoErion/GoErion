@@ -53,7 +53,7 @@ Before planning or editing, find the row whose globs match the file's path and r
 | app/Services/Company/NumberSequenceService.php | .ai/rules/services-company.md |
 | app/Services/Reporting/** | .ai/rules/services-reporting.md |
 | app/Services/** | .ai/rules/services.md |
-| app/**/Supplier/** | .ai/rules/supplier.md |
+| app/**/Supplier/**, app/Actions/Supplier/** | .ai/rules/supplier.md |
 | tests/** | .ai/rules/tests.md |
 | app/View/** | .ai/rules/view.md |
 | resources/views/accounting/** | .ai/rules/views-accounting.md |

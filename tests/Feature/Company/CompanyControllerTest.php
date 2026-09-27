@@ -97,6 +97,7 @@ it('derives protected company and owner data on the server', function () {
             'company.ownership.manage', 'company.roles.manage', 'company.roles.view', 'company.update',
             'customers.archive', 'customers.create', 'customers.credit.manage',
             'customers.groups.manage', 'customers.update', 'customers.view',
+            'suppliers.archive', 'suppliers.create', 'suppliers.terms.manage', 'suppliers.update', 'suppliers.view',
         ]);
 });
 
@@ -147,7 +148,7 @@ it('rolls back company creation when permission creation fails', function () {
     expect(Company::query()->count())->toBe(0)
         ->and(DB::table('company_user')->count())->toBe(0)
         ->and(Role::query()->count())->toBe(0)
-        ->and(Permission::query()->count())->toBe(12)
+        ->and(Permission::query()->count())->toBe(17)
         ->and(DB::table('user_roles')->count())->toBe(0)
         ->and(DB::table('role_permissions')->count())->toBe(0);
 });

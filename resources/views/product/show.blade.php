@@ -309,6 +309,7 @@
 
 
             {{-- Suppliers --}}
+            @if ($canViewSuppliers)
             <section class="rounded-2xl border border-slate-900 bg-transparent p-6">
 
                 <div class="flex items-center justify-between">
@@ -327,8 +328,8 @@
 
                     <div class="mt-4 rounded-lg border border-slate-900 p-4">
 
-                        <p class="font-medium text-slate-100">
-                            {{ $supplier->name }}
+                        <p class="break-words font-medium text-slate-100">
+                            {{ $supplier->name }}{{ $supplier->is_active ? '' : ' (Archived)' }}
                         </p>
 
                         @if ($supplier->pivot?->supplier_sku)
@@ -344,7 +345,7 @@
 
                             <p class="mt-2 text-sm text-slate-300">
                                 Cost:
-                                {{ number_format((float) $supplier->pivot->cost, 2) }}
+                                {{ $supplier->pivot->cost }} <span class="text-xs">(currency not assigned)</span>
                             </p>
 
                         @endif
@@ -360,6 +361,7 @@
                 @endforelse
 
             </section>
+            @endif
 
 
             {{-- Record --}}

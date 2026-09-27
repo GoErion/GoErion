@@ -1,17 +1,16 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models\Product;
 
 use App\Models\Supplier\Supplier;
-use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\RouteKey;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 
-#[Fillable([])]
-class ProductSupplier extends Model
+#[Fillable(['company_id', 'supplier_sku', 'cost'])]
+class ProductSupplier extends Pivot
 {
     protected $table = 'product_suppliers';
 

@@ -274,7 +274,8 @@ it('loads only enabled canonical permissions for create and edit forms', functio
     Permission::query()->where('name', CompanyPermission::OwnershipManage->value)->update(['assignable_to_custom_roles' => true]);
     Permission::query()->where('name', CompanyPermission::MembersView->value)->update(['assignable_to_custom_roles' => false]);
     $expected = ['company.invitations.manage', 'company.members.manage', 'company.roles.manage', 'company.roles.view', 'company.update',
-        'customers.archive', 'customers.create', 'customers.credit.manage', 'customers.groups.manage', 'customers.update', 'customers.view'];
+        'customers.archive', 'customers.create', 'customers.credit.manage', 'customers.groups.manage', 'customers.update', 'customers.view',
+        'suppliers.archive', 'suppliers.create', 'suppliers.terms.manage', 'suppliers.update', 'suppliers.view'];
 
     foreach ([route('company.roles.create', $company), route('company.roles.edit', [$company, $role->uuid])] as $url) {
         $this->actingAs($owner)->get($url)->assertOk()->assertViewHas('permissions', fn ($permissions): bool => $permissions->pluck('name')->sort()->values()->all() === $expected);

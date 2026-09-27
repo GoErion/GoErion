@@ -7,9 +7,11 @@ namespace App\Providers;
 use App\Models\Company\Company;
 use App\Models\Customer\Customer;
 use App\Models\Customer\CustomerGroup;
+use App\Models\Supplier\Supplier;
 use App\Policies\CompanyPolicy;
 use App\Policies\CustomerGroupPolicy;
 use App\Policies\CustomerPolicy;
+use App\Policies\SupplierPolicy;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
@@ -25,6 +27,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Gate::policy(Company::class, CompanyPolicy::class);
         Gate::policy(Customer::class, CustomerPolicy::class);
+        Gate::policy(Supplier::class, SupplierPolicy::class);
         Gate::policy(CustomerGroup::class, CustomerGroupPolicy::class);
     }
 

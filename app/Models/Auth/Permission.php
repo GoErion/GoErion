@@ -6,6 +6,7 @@ namespace App\Models\Auth;
 
 use App\Enums\CompanyPermission;
 use App\Enums\CustomerPermission;
+use App\Enums\SupplierPermission;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
@@ -39,6 +40,7 @@ class Permission extends Model
         return array_merge(
             array_column(CompanyPermission::assignable(), 'value'),
             array_column(CustomerPermission::cases(), 'value'),
+            array_column(SupplierPermission::cases(), 'value'),
         );
     }
 
