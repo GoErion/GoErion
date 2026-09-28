@@ -12,11 +12,16 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['company_id', 'name', 'code'])]
+#[Fillable(['company_id', 'name', 'code', 'is_active'])]
 #[RouteKey('uuid')]
 class Brand extends Model
 {
     use HasUuid;
+
+    protected function casts(): array
+    {
+        return ['is_active' => 'boolean'];
+    }
 
     protected $table = 'brands';
 

@@ -5,15 +5,15 @@ declare(strict_types=1);
 use Database\Factories\BrandFactory;
 use Database\Factories\CompanyFactory;
 use Database\Factories\UserFactory;
-use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Support\RefreshProductDatabase;
+use Tests\Support\SupplierFixture;
 
-uses(RefreshDatabase::class);
+uses(RefreshProductDatabase::class);
 
 function companyMember(): array
 {
-    $user = UserFactory::new()->create();
-    $company = CompanyFactory::new()->create();
-    $user->companies()->attach($company);
+    [$owner, $company] = SupplierFixture::owner();
+    $user = SupplierFixture::member($company, ['products.classifications.manage']);
 
     return [$user, $company];
 }
@@ -191,24 +191,24 @@ it('does not update a brand through another company', function () {
     ]);
 });
 
-it('deletes a brand owned by the company', function () {
+it('archives a brand owned by the company', function () {
     [$user, $company] = companyMember();
     $brand = BrandFactory::new()->for($company)->create();
 
-    $response = $this->actingAs($user)->delete(route('brand.destroy', [$company, $brand]));
+    $response = $this->actingAs($user)->patch(route('brand.archive', [$company, $brand]));
 
     $response
         ->assertRedirect(route('brand.index', $company))
-        ->assertSessionHas('success', 'Brand deleted successfully.');
-    $this->assertDatabaseMissing('brands', ['id' => $brand->id]);
+        ->assertSessionHas('success', 'Brand archived successfully.');
+    $this->assertDatabaseHas('brands', ['id' => $brand->id, 'is_active' => false]);
 });
 
-it('does not delete a brand through another company', function () {
+it('does not archive a brand through another company', function () {
     [$user, $company] = companyMember();
     $otherCompany = CompanyFactory::new()->create();
     $brand = BrandFactory::new()->for($otherCompany)->create();
 
-    $response = $this->actingAs($user)->delete(route('brand.destroy', [$company, $brand]));
+    $response = $this->actingAs($user)->patch(route('brand.archive', [$company, $brand]));
 
     $response->assertNotFound();
     $this->assertModelExists($brand);

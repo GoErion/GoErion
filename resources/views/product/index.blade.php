@@ -1,17 +1,18 @@
 <x-home :company="$company">
-    <div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class="break-words mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
     <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <p class="text-xs font-medium uppercase tracking-[0.2em] text-slate-400">
                 Inventory
             </p>
 
-            <h1 class="mt-2 text-3xl font-bold text-slate-100">
+            <h1 class="mt-2 text-3xl font-bold text-slate-100 break-words">
                 Products
             </h1>
         </div>
 
-        <div class="flex items-center space-x-3">
+        <div class="flex flex-wrap items-center gap-3">
+@can('create', [\App\Models\Product\Product::class, $company])
             <a
                 href="{{ route('product.create', $company) }}"
                 class="inline-flex items-center justify-center rounded-lg border border-slate-900 bg-transparent px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-slate-700 hover:text-white"
@@ -19,6 +20,8 @@
                 Add Product
             </a>
 
+@endcan
+@can('manageClassifications', [\App\Models\Product\Product::class, $company])
             <a
                 href="{{ route('category.create', $company) }}"
                 class="inline-flex items-center justify-center rounded-lg border border-slate-900 bg-transparent px-4 py-2 text-sm font-medium text-slate-200 transition hover:border-slate-700 hover:text-white"
@@ -39,6 +42,7 @@
             >
                 Add Unit
             </a>
+@endcan
         </div>
     </div>
 
@@ -81,7 +85,7 @@
                                 {{ $product->category?->name ?? 'Uncategorized' }}
                             </p>
 
-                            <h2 class="mt-2 text-xl font-semibold text-slate-100">
+                            <h2 class="mt-2 text-xl font-semibold text-slate-100 break-words">
                                 {{ $product->name }}
                             </h2>
                         </div>
@@ -100,7 +104,7 @@
                         <div class="flex items-center justify-between text-sm text-slate-300">
                             <span>SKU</span>
 
-                            <span class="font-medium text-slate-100">
+                            <span class="font-medium text-slate-100 break-words">
                                 {{ $product->sku ?? '—' }}
                             </span>
                         </div>
@@ -108,7 +112,7 @@
                         <div class="mt-2 flex items-center justify-between text-sm text-slate-300">
                             <span>Unit</span>
 
-                            <span class="font-medium text-slate-100">
+                            <span class="font-medium text-slate-100 break-words">
                                 {{ $product->unit?->name ?? '—' }}
                             </span>
                         </div>
@@ -116,7 +120,7 @@
                     </div>
 
 
-                    <p class="line-clamp-3 text-sm leading-6 text-slate-400">
+                    <p class="break-words text-sm leading-6 text-slate-400">
                         {{ $product->description ?: 'No description provided for this product.' }}
                     </p>
 
@@ -128,22 +132,20 @@
                                 Price
                             </p>
 
-                            <p class="mt-1 text-lg font-semibold text-slate-100">
+                            <p class="mt-1 text-lg font-semibold text-slate-100 break-words">
 
                                 @php
-                                    $productPrice = $product->prices
-                                        ->sortByDesc('created_at')
-                                        ->first();
+                                    $productPrice = $product->prices->first();
                                 @endphp
 
                                 @if ($productPrice)
 
-                                    {{ $productPrice->currency ?? 'USD' }}
-                                    {{ number_format((float) $productPrice->price, 2) }}
+                                    {{ $productPrice->currency }}
+                                    {{ $productPrice->price }}
 
                                 @else
 
-                                    —
+                                    No retail price.
 
                                 @endif
 
@@ -178,6 +180,6 @@
     @endif
 
 </div>
-```
+
 
 </x-home>

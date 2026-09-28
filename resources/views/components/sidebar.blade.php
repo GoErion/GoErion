@@ -34,11 +34,13 @@
                                 @can('viewAny', [\App\Models\Customer\Customer::class, $company])
                                     <li><x-sidebar-link href="{{ route('company.customers.index', $company) }}">Customers</x-sidebar-link></li>
                                 @endcan
+@can('viewAny', [\App\Models\Product\Product::class, $company])
                                 <li>
                                         <x-sidebar-link href="{{ route('product.index',$company) }}">
                                             Product
                                         </x-sidebar-link>
                                 </li>
+@endcan
                                 <li>
                                   <x-sidebar-link href="">
                                       Reports

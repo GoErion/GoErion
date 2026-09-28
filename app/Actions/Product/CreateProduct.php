@@ -4,126 +4,53 @@ declare(strict_types=1);
 
 namespace App\Actions\Product;
 
+use App\Models\Auth\User;
 use App\Models\Company\Company;
+use App\Models\Product\Product;
 use App\Services\Company\NumberSequenceService;
-use Illuminate\Auth\Access\AuthorizationException;
+use App\Services\Product\ProductInput;
+use DomainException;
 use Illuminate\Support\Facades\DB;
 
 final readonly class CreateProduct
 {
-    public function __construct(private readonly NumberSequenceService $sequence)
+    public function __construct(private NumberSequenceService $numbers) {}
+
+    /** @param array<string, mixed> $values */
+    public function handle(Company $company, User $actor, array $values): Product
     {
-    }
-    public function handle(array $input, Company $company)
-    {
-        return DB::transaction(function () use ($company, $input)
-        {
-            //Category must belong to this company.
-            $categoryExists = $company->categories()->whereKey($input['category_id'])->exists();
-            if (! $categoryExists)
-            {
-                throw new AuthorizationException(
-                    'The selected category does not belong to this company.'
-                );
+        return DB::transaction(function () use ($company, $actor, $values): Product {
+            $company = ProductMutation::lock($company, $actor, 'create');
+            $values = ProductInput::validate($values, $company);
+            if (! empty($values['prices'])) {
+                ProductMutation::authorize($company, $actor, 'managePrices');
             }
-            //Unit must belong to this company.
-            $unitExists = $company->units()
-                ->whereKey($input['unit_id'])
-                ->exists();
-
-            if (! $unitExists)
-            {
-                throw new AuthorizationException(
-                    'The selected unit does not belong to this company.'
-                );
+            if (! empty($values['barcodes'])) {
+                ProductMutation::authorize($company, $actor, 'manageBarcodes');
             }
-            //Brand is optional. && If supplied, it must belong to this company.
-            if (! empty($input['brand_id']))
-            {
-
-                $brandExists = $company->brands()
-                    ->whereKey($input['brand_id'])
-                    ->exists();
-
-                if (! $brandExists)
-                {
-                    throw new AuthorizationException(
-                        'The selected brand does not belong to this company.'
-                    );
-                }
+            $sequence = $company->numberSequences()->firstOrCreate(['type' => 'product'], ['prefix' => 'SKU', 'next_number' => 1]);
+            if (! is_string($sequence->prefix) || trim($sequence->prefix) === '' || $sequence->next_number < 1 || $sequence->next_number >= 2147483647) {
+                throw new DomainException('Product sequence is invalid or exhausted.');
             }
-            // Generate SKU if user did not provide one.
-
-            $sku = $input['sku'] ?? null;
-
-            if (blank($sku))
-            {
-
-                $sequence = $company->numberSequences()
-                    ->where('type', 'product')
-                    ->first();
-
-                if (! $sequence)
-                {
-                    $sequence = $company->numberSequences()->create([
-                        'type' => 'product',
-                        'prefix' => 'SKU',
-                        'next_number' => 1,
-                    ]);
-                }
-
-                $sku = $this->sequence->next($sequence);
+            $sku = $this->numbers->next($sequence);
+            if ($company->products()->where('sku', $sku)->exists()) {
+                throw new DomainException('Product sequence collides with a legacy SKU; allocation rolled back.');
             }
-            //Tracking rules.
-            if (($input['track_serial'] ?? false) && ! ($input['track_stock'] ?? true))
-            {
-                throw new \InvalidArgumentException(
-                    'Serial tracking requires stock tracking.'
-                );
+            $prices = $values['prices'] ?? [];
+            $barcodes = $values['barcodes'] ?? [];
+            unset($values['prices'], $values['barcodes']);
+            $product = new Product([...$values, 'is_active' => true]);
+            $product->company()->associate($company);
+            $product->sku = $sku;
+            $product->save();
+            foreach ($prices as $price) {
+                $product->prices()->create([...$price, 'company_id' => $company->id]);
             }
-            if (($input['track_batch'] ?? false) && ! ($input['track_stock'] ?? true))
-            {
-                throw new \InvalidArgumentException(
-                    'Batch tracking requires stock tracking.'
-                );
+            foreach ($barcodes as $barcode) {
+                $product->barcodes()->create([...$barcode, 'company_id' => $company->id]);
             }
-            //Create product through the company relationship.
-            $product = $company->products()->create([
-                'category_id' => $input['category_id'],
-                'unit_id' => $input['unit_id'],
-                'brand_id' => $input['brand_id'] ?? null,
-                'sku' => strtoupper($sku),
-                'name' => $input['name'],
-                'description' => $input['description'] ?? null,
-                'product_type' => $input['product_type'],
-                'track_stock' => $input['track_stock'] ?? true,
-                'track_serial' => $input['track_serial'] ?? false,
-                'track_batch' => $input['track_batch'] ?? false,
-                'is_active' => true,
-            ]);
 
-            // Create product prices.
-            foreach ($input['prices'] ?? [] as $price)
-            {
-                $product->prices()->create(
-                    [
-                        'price_type' => $price['price_type'],
-                        'price' => $price['price'],
-                        'currency' => strtoupper($price['currency']),
-                    ]
-                );
-            }
-            
-             // Create barcodes.
-            foreach ($input['barcodes'] ?? [] as $barcode)
-            {
-
-                $product->barcodes()->create([
-                    'barcode' => $barcode['barcode'],
-                    'type' => $barcode['type'],
-                ]);
-            }
             return $product;
-        });
+        }, 3);
     }
 }

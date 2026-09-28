@@ -23,6 +23,16 @@
 
                 @csrf
 
+                @if ($errors->any())
+                    <div role="alert" class="break-words text-sm text-red-400">
+                        <ul>
+                            @foreach ($errors->all() as $message)
+                                <li>{{ $message }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+
                 <div>
                     <label for="name" class="block text-sm text-slate-300">
                         Product Name
@@ -32,26 +42,6 @@
                         class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
 
                     @error('name')
-                        <p class="mt-1 text-sm text-red-400">
-                            {{ $message }}
-                        </p>
-                    @enderror
-                </div>
-
-                <div>
-                    <label for="sku" class="block text-sm text-slate-300">
-                        SKU
-                    </label>
-
-                    <input id="sku" type="text" name="sku" value="{{ old('sku') }}"
-                        placeholder="Leave empty to generate automatically"
-                        class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
-
-                    <p class="mt-1 text-xs text-slate-500">
-                        Leave empty and GoErion will generate the SKU.
-                    </p>
-
-                    @error('sku')
                         <p class="mt-1 text-sm text-red-400">
                             {{ $message }}
                         </p>
@@ -161,6 +151,7 @@
                     @enderror
                 </div>
 
+@can('managePrices', [\App\Models\Product\Product::class, $company])
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
                         <div>
@@ -175,7 +166,7 @@
                     </div>
 
                     <div id="price-rows" class="space-y-4">
-                        @foreach (old('prices', []) as $index => $price)
+                        @foreach ($priceRows as $index => $price)
                             <div class="price-row rounded-xl border border-slate-800 p-4">
                                 <div class="grid gap-4 sm:grid-cols-[1fr_1fr_1fr_auto] sm:items-end">
                                     <div>
@@ -185,12 +176,12 @@
                                             name="prices[{{ $index }}][price_type]" required
                                             class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
                                             <option value="">Select type</option>
-                                            @foreach (['cost' => 'Cost', 'retail' => 'Retail', 'wholesale' => 'Wholesale', 'dealer' => 'Dealer'] as $value => $label)
+                                            @foreach (['retail' => 'Retail', 'wholesale' => 'Wholesale', 'dealer' => 'Dealer'] as $value => $label)
                                                 <option value="{{ $value }}" @selected(($price['price_type'] ?? '') === $value)>
                                                     {{ $label }}</option>
                                             @endforeach
                                         </select>
-                                        @error("prices.{$index}.price_type")
+                                        @error("prices.{$price['error_index']}.price_type")
                                             <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                                         @enderror
                                     </div>
@@ -200,9 +191,9 @@
                                             class="block text-sm text-slate-300">Price</label>
                                         <input id="price_{{ $index }}" type="number"
                                             name="prices[{{ $index }}][price]"
-                                            value="{{ $price['price'] ?? '' }}" min="0" step="0.01" required
+                                            value="{{ $price['price'] ?? '' }}" min="0" step="0.0001" required
                                             class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
-                                        @error("prices.{$index}.price")
+                                        @error("prices.{$price['error_index']}.price")
                                             <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                                         @enderror
                                     </div>
@@ -212,9 +203,9 @@
                                             class="block text-sm text-slate-300">Currency</label>
                                         <input id="currency_{{ $index }}" type="text"
                                             name="prices[{{ $index }}][currency]"
-                                            value="{{ $price['currency'] ?? 'USD' }}" maxlength="3" required
+                                            value="{{ $price['currency'] ?? strtoupper($company->currency) }}" maxlength="3" required
                                             class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 uppercase text-white">
-                                        @error("prices.{$index}.currency")
+                                        @error("prices.{$price['error_index']}.currency")
                                             <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                                         @enderror
                                     </div>
@@ -227,6 +218,8 @@
                     </div>
                 </div>
 
+@endcan
+@can('manageBarcodes', [\App\Models\Product\Product::class, $company])
                 <div class="space-y-4">
                     <div class="flex items-center justify-between gap-4">
                         <div>
@@ -241,7 +234,7 @@
                     </div>
 
                     <div id="barcode-rows" class="space-y-4">
-                        @foreach (old('barcodes', []) as $index => $barcode)
+                        @foreach ($barcodeRows as $index => $barcode)
                             <div class="barcode-row rounded-xl border border-slate-800 p-4">
                                 <div class="grid gap-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
                                     <div>
@@ -251,7 +244,7 @@
                                             name="barcodes[{{ $index }}][barcode]"
                                             value="{{ $barcode['barcode'] ?? '' }}" maxlength="100" required
                                             class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
-                                        @error("barcodes.{$index}.barcode")
+                                        @error("barcodes.{$barcode['error_index']}.barcode")
                                             <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                                         @enderror
                                     </div>
@@ -268,7 +261,7 @@
                                                     {{ $label }}</option>
                                             @endforeach
                                         </select>
-                                        @error("barcodes.{$index}.type")
+                                        @error("barcodes.{$barcode['error_index']}.type")
                                             <p class="mt-1 text-sm text-red-400">{{ $message }}</p>
                                         @enderror
                                     </div>
@@ -281,6 +274,7 @@
                     </div>
                 </div>
 
+@endcan
                 <div class="space-y-3">
 
                     <label for="track_stock" class="flex items-center gap-3 text-slate-300">
@@ -333,7 +327,6 @@
                     <select id="price_type___INDEX__" name="prices[__INDEX__][price_type]" required
                         class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
                         <option value="">Select type</option>
-                        <option value="cost">Cost</option>
                         <option value="retail">Retail</option>
                         <option value="wholesale">Wholesale</option>
                         <option value="dealer">Dealer</option>
@@ -343,13 +336,13 @@
                 <div>
                     <label for="price___INDEX__" class="block text-sm text-slate-300">Price</label>
                     <input id="price___INDEX__" type="number" name="prices[__INDEX__][price]" min="0"
-                        step="0.01" required
+                        step="0.0001" required
                         class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
                 </div>
 
                 <div>
                     <label for="currency___INDEX__" class="block text-sm text-slate-300">Currency</label>
-                    <input id="currency___INDEX__" type="text" name="prices[__INDEX__][currency]" value="USD"
+                    <input id="currency___INDEX__" type="text" name="prices[__INDEX__][currency]" value="{{ strtoupper($company->currency) }}"
                         maxlength="3" required
                         class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 uppercase text-white">
                 </div>
@@ -389,9 +382,10 @@
     </template>
 
     <script>
+        if (document.getElementById('price-rows')) {
         const priceRows = document.getElementById('price-rows');
         const priceTemplate = document.getElementById('price-row-template');
-        let priceIndex = {{ count(old('prices', [])) }};
+        let priceIndex = {{ count($priceRows) }};
 
         document.getElementById('add-price').addEventListener('click', () => {
             const row = priceTemplate.content.cloneNode(true);
@@ -415,9 +409,11 @@
             }
         });
 
+        }
+        if (document.getElementById('barcode-rows')) {
         const barcodeRows = document.getElementById('barcode-rows');
         const barcodeTemplate = document.getElementById('barcode-row-template');
-        let barcodeIndex = {{ count(old('barcodes', [])) }};
+        let barcodeIndex = {{ count($barcodeRows) }};
 
         document.getElementById('add-barcode').addEventListener('click', () => {
             const row = barcodeTemplate.content.cloneNode(true);
@@ -440,6 +436,7 @@
                 event.target.closest('.barcode-row').remove();
             }
         });
+        }
     </script>
 
 </x-home>

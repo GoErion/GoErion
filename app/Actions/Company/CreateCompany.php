@@ -6,6 +6,7 @@ namespace App\Actions\Company;
 
 use App\Enums\CompanyPermission;
 use App\Enums\CustomerPermission;
+use App\Enums\ProductPermission;
 use App\Enums\SupplierPermission;
 use App\Models\Auth\Permission;
 use App\Models\Auth\User;
@@ -30,8 +31,8 @@ final readonly class CreateCompany
                 ['name' => $permission->value],
                 ['display_name' => $permission->displayName(), 'assignable_to_custom_roles' => $permission->isAssignableToCustomRoles()],
             )->getKey());
-            $permissionIds = $permissionIds->merge(collect([...CustomerPermission::cases(), ...SupplierPermission::cases()])->map(
-                fn (CustomerPermission|SupplierPermission $permission) => Permission::query()->firstOrCreate(
+            $permissionIds = $permissionIds->merge(collect([...CustomerPermission::cases(), ...SupplierPermission::cases(), ...ProductPermission::cases()])->map(
+                fn (CustomerPermission|SupplierPermission|ProductPermission $permission) => Permission::query()->firstOrCreate(
                     ['name' => $permission->value],
                     ['display_name' => $permission->displayName(), 'assignable_to_custom_roles' => true],
                 )->getKey(),

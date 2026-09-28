@@ -14,6 +14,7 @@ use App\Http\Requests\Supplier\CommercialTermsRequest;
 use App\Http\Requests\Supplier\SupplierRequest;
 use App\Http\Requests\Supplier\UpdateSupplierRequest;
 use App\Models\Company\Company;
+use App\Models\Product\Product;
 use App\Models\Supplier\Supplier;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -57,7 +58,10 @@ final class SupplierController extends Controller
         $products = $supplier->products()->where('products.company_id', $company->getKey())->orderBy('products.name')->orderBy('products.id')->paginate(15, ['products.*'], 'products_page');
         $companies = $request->user()->companies()->orderBy('company_name')->get();
 
-        return view('supplier.show', compact('company', 'companies', 'supplier', 'products'));
+        $canViewProducts = $request->user()->can('viewAny', [Product::class, $company]);
+        $canViewProductCosts = $request->user()->can('viewCost', [Product::class, $company]);
+
+        return view('supplier.show', compact('company', 'companies', 'supplier', 'products', 'canViewProductCosts', 'canViewProducts'));
     }
 
     public function edit(Request $request, Company $company, string $supplier): View

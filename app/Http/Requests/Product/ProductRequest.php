@@ -1,54 +1,38 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Requests\Product;
 
-use App\Enums\BarcodeType;
-use App\Enums\PriceType;
-use App\Enums\ProductType;
-use Illuminate\Contracts\Validation\ValidationRule;
+use App\Models\Product\Product;
+use App\Services\Product\ProductInput;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 final class ProductRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
+    protected function prepareForValidation(): void
     {
-        return true;
+        $this->merge(ProductInput::normalize($this->all(), $this->route('company')));
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
+    public function authorize(): bool
+    {
+        $args = [Product::class, $this->route('company')];
+
+        return $this->user()?->can('create', $args) === true
+            && (! $this->filled('prices') || $this->user()->can('managePrices', $args))
+            && (! $this->filled('barcodes') || $this->user()->can('manageBarcodes', $args));
+    }
+
+    /** @return array<string, mixed> */
     public function rules(): array
     {
-        return [
-            'category_id' => ['required','integer','exists:categories,id',],
-            'unit_id' => ['required','integer','exists:units,id',],
-            'brand_id' => ['nullable','integer','exists:brands,id',],
-            'sku' => ['nullable','string','max:100',],
-            'name' => ['required','string','max:255',],
-            'description' => ['nullable','string',],
-            'product_type' => ['required',Rule::enum(ProductType::class),],
-            'track_stock' => ['boolean',],
-            'track_serial' => ['boolean',],
-            'track_batch' => ['boolean',],
+        return ProductInput::rules($this->route('company'));
+    }
 
-            //product price
-            'prices' => ['nullable','array',],
-            'prices.*.price_type' => ['required',Rule::enum(PriceType::class),],
-            'prices.*.price' => ['required','numeric','min:0',],
-            'prices.*.currency' => ['required','string','size:3',],
-
-             // Barcodes
-            'barcodes' => ['nullable','array',],
-            'barcodes.*.barcode' => ['required','string','max:100','distinct','unique:product_barcodes,barcode',],
-            'barcodes.*.type' => ['required',Rule::enum(BarcodeType::class),],
-               ];
+    /** @return list<callable> */
+    public function after(): array
+    {
+        return [ProductInput::after(...)];
     }
 }

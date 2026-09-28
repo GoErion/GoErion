@@ -1,7 +1,7 @@
 <x-home :company="$company">
 
-```
-<div class="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+
+<div class="break-words mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 
     {{-- Header --}}
     <div class="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -11,7 +11,7 @@
                 Inventory
             </p>
 
-            <h1 class="mt-2 text-3xl font-bold text-slate-100">
+            <h1 class="mt-2 text-3xl font-bold text-slate-100 break-words">
                 {{ $product->name }}
             </h1>
 
@@ -49,7 +49,7 @@
                             Product
                         </p>
 
-                        <h2 class="mt-2 text-2xl font-semibold text-slate-100">
+                        <h2 class="mt-2 text-2xl font-semibold text-slate-100 break-words">
                             {{ $product->name }}
                         </h2>
                     </div>
@@ -87,7 +87,7 @@
                                 SKU
                             </dt>
 
-                            <dd class="mt-2 font-medium text-slate-100">
+                            <dd class="mt-2 font-medium text-slate-100 break-words">
                                 {{ $product->sku }}
                             </dd>
                         </div>
@@ -97,7 +97,7 @@
                                 Category
                             </dt>
 
-                            <dd class="mt-2 font-medium text-slate-100">
+                            <dd class="mt-2 font-medium text-slate-100 break-words">
                                 {{ $product->category?->name ?? 'Uncategorized' }}
                             </dd>
                         </div>
@@ -107,7 +107,7 @@
                                 Brand
                             </dt>
 
-                            <dd class="mt-2 font-medium text-slate-100">
+                            <dd class="mt-2 font-medium text-slate-100 break-words">
                                 {{ $product->brand?->name ?? 'No Brand' }}
                             </dd>
                         </div>
@@ -117,7 +117,7 @@
                                 Unit
                             </dt>
 
-                            <dd class="mt-2 font-medium text-slate-100">
+                            <dd class="mt-2 font-medium text-slate-100 break-words">
                                 {{ $product->unit?->name ?? '—' }}
                             </dd>
                         </div>
@@ -127,7 +127,7 @@
                                 Product Type
                             </dt>
 
-                            <dd class="mt-2 font-medium text-slate-100">
+                            <dd class="mt-2 font-medium text-slate-100 break-words">
                                 {{ $product->product_type?->value ?? $product->product_type }}
                             </dd>
                         </div>
@@ -178,7 +178,7 @@
                                 Stock
                             </p>
 
-                            <p class="mt-2 text-sm font-medium text-slate-100">
+                            <p class="mt-2 text-sm font-medium text-slate-100 break-words">
                                 {{ $product->track_stock ? 'Tracked' : 'Not Tracked' }}
                             </p>
 
@@ -190,7 +190,7 @@
                                 Serial
                             </p>
 
-                            <p class="mt-2 text-sm font-medium text-slate-100">
+                            <p class="mt-2 text-sm font-medium text-slate-100 break-words">
                                 {{ $product->track_serial ? 'Tracked' : 'Not Tracked' }}
                             </p>
 
@@ -202,7 +202,7 @@
                                 Batch
                             </p>
 
-                            <p class="mt-2 text-sm font-medium text-slate-100">
+                            <p class="mt-2 text-sm font-medium text-slate-100 break-words">
                                 {{ $product->track_batch ? 'Tracked' : 'Not Tracked' }}
                             </p>
 
@@ -226,7 +226,7 @@
 
                 <div class="flex items-center justify-between">
 
-                    <h2 class="text-lg font-semibold text-slate-100">
+                    <h2 class="text-lg font-semibold text-slate-100 break-words">
                         Prices
                     </h2>
 
@@ -244,7 +244,7 @@
 
                             <div>
 
-                                <p class="text-sm font-medium text-slate-100">
+                                <p class="text-sm font-medium text-slate-100 break-words">
                                     {{ ucfirst($price->price_type->value) }}
                                 </p>
 
@@ -254,9 +254,9 @@
 
                             </div>
 
-                            <p class="text-lg font-semibold text-slate-100">
+                            <p class="text-lg font-semibold text-slate-100 break-words">
                                 {{ $price->currency }}
-                                {{ number_format((float) $price->price, 2) }}
+                                {{ $price->price }}
                             </p>
 
                         </div>
@@ -277,7 +277,7 @@
             {{-- Barcodes --}}
             <section class="rounded-2xl border border-slate-900 bg-transparent p-6">
 
-                <h2 class="text-lg font-semibold text-slate-100">
+                <h2 class="text-lg font-semibold text-slate-100 break-words">
                     Barcodes
                 </h2>
 
@@ -314,7 +314,7 @@
 
                 <div class="flex items-center justify-between">
 
-                    <h2 class="text-lg font-semibold text-slate-100">
+                    <h2 class="text-lg font-semibold text-slate-100 break-words">
                         Suppliers
                     </h2>
 
@@ -328,7 +328,7 @@
 
                     <div class="mt-4 rounded-lg border border-slate-900 p-4">
 
-                        <p class="break-words font-medium text-slate-100">
+                        <p class="break-words font-medium text-slate-100 break-words">
                             {{ $supplier->name }}{{ $supplier->is_active ? '' : ' (Archived)' }}
                         </p>
 
@@ -341,7 +341,7 @@
 
                         @endif
 
-                        @if ($supplier->pivot?->cost !== null)
+                        @if ($canViewCosts && $supplier->pivot?->cost !== null)
 
                             <p class="mt-2 text-sm text-slate-300">
                                 Cost:
@@ -367,7 +367,7 @@
             {{-- Record --}}
             <section class="rounded-2xl border border-slate-900 bg-transparent p-6">
 
-                <h2 class="text-lg font-semibold text-slate-100">
+                <h2 class="text-lg font-semibold text-slate-100 break-words">
                     Record
                 </h2>
 
@@ -402,6 +402,6 @@
     </div>
 
 </div>
-```
+
 
 </x-home>

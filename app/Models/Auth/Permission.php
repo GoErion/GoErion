@@ -6,6 +6,7 @@ namespace App\Models\Auth;
 
 use App\Enums\CompanyPermission;
 use App\Enums\CustomerPermission;
+use App\Enums\ProductPermission;
 use App\Enums\SupplierPermission;
 use App\Traits\HasUuid;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
@@ -41,6 +42,7 @@ class Permission extends Model
             array_column(CompanyPermission::assignable(), 'value'),
             array_column(CustomerPermission::cases(), 'value'),
             array_column(SupplierPermission::cases(), 'value'),
+            array_column(ProductPermission::cases(), 'value'),
         );
     }
 

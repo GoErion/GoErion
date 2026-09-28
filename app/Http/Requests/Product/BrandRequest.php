@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Product;
 
-use App\Models\Product\Brand;
-use Illuminate\Contracts\Validation\ValidationRule;
-use Illuminate\Database\Query\Builder;
+use App\Models\Product\Product;
+use App\Services\Product\ClassificationInput;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -14,42 +13,22 @@ final class BrandRequest extends FormRequest
 {
     protected function prepareForValidation(): void
     {
-        $this->merge([
-            'name' => strtolower($this->string('name')->toString()),
-            'code' => strtoupper($this->string('code')->toString()),
-        ]);
+        $this->merge(ClassificationInput::normalize($this->all(), 'brand'));
     }
 
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        $company = $this->route('company');
-
-        return $company !== null
-            && $this->user()?->companies()->whereKey($company->getKey())->exists() === true;
+        return $this->user()?->can('manageClassifications', [Product::class, $this->route('company')]) === true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
+    /** @return array<string, mixed> */
     public function rules(): array
     {
-        return [
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                Rule::unique(Brand::class)
-                    ->where(fn (Builder $query): Builder => $query
-                        ->where('company_id', $this->route('company')->getKey())
-                        ->where('code', strtoupper($this->string('code')->toString())))
-                    ->ignore($this->route('brand')),
-            ],
-            'code' => ['required', 'string', 'max:50'],
-        ];
+        $rules = ClassificationInput::rules($this->route('company'), 'brand');
+        if (is_string($this->input('code'))) {
+            $rules['name'][] = Rule::unique('brands', 'name')->where('company_id', $this->route('company')->id)->where('code', $this->input('code'))->ignore($this->route('company')->brands()->where('uuid', $this->route('brand'))->value('id'));
+        }
+
+        return $rules;
     }
 }

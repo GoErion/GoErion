@@ -15,6 +15,11 @@ uses(RefreshSupplierDatabase::class);
 
 function supplierMigration(string $suffix): object
 {
+    // Roll back dependent Product constraints before testing the older Supplier key migration.
+    if ($suffix === 'strengthen_product_supplier_tenant_constraints' && Schema::hasColumn('product_prices', 'company_id')) {
+        (require glob(database_path('migrations/*_strengthen_product_phase5a_tenant_integrity.php'))[0])->down();
+    }
+
     return require glob(database_path('migrations/*_'.$suffix.'.php'))[0];
 }
 

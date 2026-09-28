@@ -14,3 +14,6 @@ Follow the repository's Pest style with independent, deterministic, behavior-foc
 
 ## Supplier test isolation fails closed
 Supplier test infrastructure must reject MySQL before connection resolution unless the exact disposable Supplier database and schema-exclusive credentials have been independently certified. Never enumerate or clean tables across schemas, accept qualified cleanup targets, or fall back to development database credentials.
+
+## Product tests remain isolated by default
+Product tests use explicit testing configuration and SQLite :memory: until separately approved MySQL isolation is certified. Never fall back to project environment credentials or persistent databases. Preserve explicit MySQL-only checks and keep workers disabled before application bootstrap.

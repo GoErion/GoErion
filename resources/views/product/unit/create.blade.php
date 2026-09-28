@@ -23,11 +23,11 @@
                 @csrf
 
                 <div>
-                    <label class="block text-sm text-slate-300">
+                    <label for="name" class="block text-sm text-slate-300">
                         Unit Name
                     </label>
 
-                    <input type="text" name="name" value="{{ old('name') }}" placeholder="Kilogram" required
+                    <input id="name" type="text" name="name" value="{{ old('name') }}" placeholder="Kilogram" required
                         class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
 
                     @error('name')
@@ -38,11 +38,11 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm text-slate-300">
+                    <label for="symbol" class="block text-sm text-slate-300">
                         Symbol
                     </label>
 
-                    <input type="text" name="symbol" value="{{ old('symbol') }}" placeholder="kg" required
+                    <input id="symbol" type="text" name="symbol" value="{{ old('symbol') }}" placeholder="kg" required
                         class="mt-2 w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white">
 
                     @error('symbol')

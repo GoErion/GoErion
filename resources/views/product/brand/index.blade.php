@@ -10,7 +10,7 @@
                     Inventory
                 </p>
 
-                <h1 class="mt-2 text-3xl font-bold text-slate-100">
+                <h1 class="mt-2 text-3xl font-bold text-slate-100 break-words">
                     Brands
                 </h1>
             </div>
@@ -32,8 +32,8 @@
                 </p>
             </div>
         @else
-            <div class="overflow-hidden rounded-2xl border border-slate-900">
-                <table class="min-w-full divide-y divide-slate-900">
+            <div class="overflow-x-auto rounded-2xl border border-slate-900">
+                <table class="w-full table-fixed break-words divide-y divide-slate-900">
                     <thead class="bg-slate-950/30">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-400">Name</th>
@@ -44,7 +44,7 @@
                     <tbody class="divide-y divide-slate-900">
                         @foreach ($brands as $brand)
                             <tr>
-                                <td class="px-6 py-4 text-sm font-medium text-slate-100">{{ $brand->name }}</td>
+                                <td class="px-6 py-4 text-sm font-medium text-slate-100 break-words">{{ $brand->name }}{{ $brand->is_active ? '' : ' (Archived)' }}</td>
                                 <td class="px-6 py-4 text-sm text-slate-300">{{ $brand->code }}</td>
                                 <td class="px-6 py-4">
                                     <div class="flex justify-end gap-3">
@@ -53,12 +53,12 @@
                                             Edit
                                         </a>
 
-                                        <form method="POST" action="{{ route('brand.destroy', [$company, $brand]) }}">
+                                        <form method="POST" action="{{ route('brand.archive', [$company, $brand]) }}">
                                             @csrf
-                                            @method('DELETE')
+                                            @method('PATCH')
 
                                             <button type="submit" class="text-sm font-medium text-red-400 hover:text-red-300">
-                                                Delete
+                                                Archive
                                             </button>
                                         </form>
                                     </div>

@@ -60,9 +60,9 @@ it('protects Product Supplier exposure without hiding unrelated Product informat
     $product->suppliers()->attach($supplier, ['company_id' => $company->id, 'cost' => '10.1234']);
     [$outsider] = SupplierFixture::owner();
     $this->actingAs($outsider)->get(route('product.show', [$company, $product]))->assertForbidden();
-    $member = SupplierFixture::member($company);
+    $member = SupplierFixture::member($company, ['products.view']);
     $this->actingAs($member)->get(route('product.show', [$company, $product]))->assertSee($product->name)->assertDontSee('Secret supplier')->assertDontSee('10.1234');
-    $viewer = SupplierFixture::member($company, ['suppliers.view']);
+    $viewer = SupplierFixture::member($company, ['suppliers.view', 'products.view', 'products.cost.view']);
     $this->actingAs($viewer)->get(route('product.show', [$company, $product]))->assertSee('Secret supplier')->assertSee('10.1234')->assertSee('currency not assigned');
     $foreignProduct = ProductFactory::new()->create();
     $this->get(route('product.show', [$company, $foreignProduct]))->assertNotFound();
@@ -78,4 +78,26 @@ it('does not expose corrupt foreign Supplier links even when constraints were by
     } finally {
         DB::table('product_suppliers')->where('product_id', $product->id)->delete();
     }
+});
+
+it('correction Supplier links require Product view while cost stays separately protected', function () {
+    [$owner, $company] = SupplierFixture::owner();
+    $supplier = SupplierFactory::new()->create(['company_id' => $company->id]);
+    $product = ProductFactory::new()->create(['company_id' => $company->id, 'name' => 'Context product']);
+    $product->suppliers()->attach($supplier, ['company_id' => $company->id, 'cost' => '987.1234']);
+    $url = route('company.suppliers.show', [$company, $supplier]);
+    $productUrl = route('product.show', [$company, $product]);
+    foreach ([false, true] as $cost) {
+        $viewer = SupplierFixture::member($company, ['suppliers.view', ...($cost ? ['products.cost.view'] : [])]);
+        $page = $this->actingAs($viewer)->get($url)->assertOk()->assertSee('Context product')->assertDontSee($productUrl, false);
+        if ($cost) {
+            $page->assertSee('987.1234');
+        } else {
+            $page->assertDontSee('987.1234');
+        }
+    }
+    $viewer = SupplierFixture::member($company, ['suppliers.view', 'products.view']);
+    $this->actingAs($viewer)->get($url)->assertOk()->assertSee('href="'.$productUrl.'"', false)->assertDontSee('987.1234');
+    [$outsider] = SupplierFixture::owner();
+    $this->actingAs($outsider)->get($url)->assertForbidden();
 });

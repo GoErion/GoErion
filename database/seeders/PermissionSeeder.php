@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Enums\CompanyPermission;
 use App\Enums\CustomerPermission;
+use App\Enums\ProductPermission;
 use App\Enums\SupplierPermission;
 use App\Models\Auth\Permission;
 use Illuminate\Database\Seeder;
@@ -150,7 +151,7 @@ class PermissionSeeder extends Seeder
                 $permission
             );
         }
-        foreach ([...CustomerPermission::cases(), ...SupplierPermission::cases()] as $permission) {
+        foreach ([...CustomerPermission::cases(), ...SupplierPermission::cases(), ...ProductPermission::cases()] as $permission) {
             Permission::query()->updateOrCreate(
                 ['name' => $permission->value],
                 ['display_name' => $permission->displayName(), 'assignable_to_custom_roles' => true],

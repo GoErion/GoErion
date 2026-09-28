@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Models\Product;
@@ -10,11 +11,12 @@ use Illuminate\Database\Eloquent\Attributes\RouteKey;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-#[Fillable(['product_id','price_type','price','currency',])]
+#[Fillable(['company_id', 'product_id', 'price_type', 'price', 'currency'])]
 #[RouteKey('uuid')]
 class ProductPrice extends Model
 {
     use HasUuid;
+
     protected $table = 'product_prices';
 
     public function product(): BelongsTo

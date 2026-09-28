@@ -35,11 +35,7 @@
                             <option value="{{ $category->id }}" @selected(old('parent_id') == $category->id)>
                                 {{ $category->name }}
                             </option>
-                            @foreach ($category->descendants as $child)
-                                    <option value="{{ $child->id }}">
-                                    {{ $child->name }}
-                                    </option>
-                            @endforeach
+
                         @endforeach
                     </select>
 

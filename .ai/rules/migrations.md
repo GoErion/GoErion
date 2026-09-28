@@ -20,3 +20,6 @@ Invitation migrations preserve historical invitation records while removing plai
 
 ## Customer group membership uses composite tenant keys
 Customer group memberships have one row per Customer. Both Customer and group references include company_id in composite foreign keys; migration preflight rejects legacy cross-company assignments before DDL. Preserve membership on migration rollback and preserve Customers when a group is deleted.
+
+## Preserve Product classification tenant integrity
+Product classification references and Category parents preserve Company alignment through composite constraints. Forward migrations preflight legacy violations before DDL and restrict classification deletion rather than deleting Products. Document unsafe rollback conditions and non-atomic MySQL DDL limitations.

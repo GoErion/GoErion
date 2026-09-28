@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-#[Fillable(['company_id', 'category_id', 'unit_id', 'brand_id', 'sku', 'name', 'description', 'product_type', 'track_stock', 'track_serial', 'track_batch', 'is_active'])]
+#[Fillable(['category_id', 'unit_id', 'brand_id', 'name', 'description', 'product_type', 'track_stock', 'track_serial', 'track_batch', 'is_active'])]
 #[RouteKey('uuid')]
 class Product extends Model
 {

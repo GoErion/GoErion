@@ -26,9 +26,9 @@ Route::get('/company/{company}/brands/{brand}/edit', [BrandController::class, 'e
 Route::put('/company/{company}/brands/{brand}', [BrandController::class, 'update'])
     ->scopeBindings()
     ->name('brand.update');
-Route::delete('/company/{company}/brands/{brand}', [BrandController::class, 'destroy'])
+Route::patch('/company/{company}/brands/{brand}/archive', [BrandController::class, 'archive'])
     ->scopeBindings()
-    ->name('brand.destroy');
+    ->name('brand.archive');
 // units
 Route::get('/company/{company}/units', [UnitController::class, 'index'])
     ->name('unit.index');

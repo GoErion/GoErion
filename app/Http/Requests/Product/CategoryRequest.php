@@ -1,34 +1,30 @@
 <?php
+
 declare(strict_types=1);
 
 namespace App\Http\Requests\Product;
 
-use Illuminate\Contracts\Validation\ValidationRule;
+use App\Models\Product\Product;
+use App\Services\Product\ClassificationInput;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 final class CategoryRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
+    protected function prepareForValidation(): void
     {
-        return true;
+        $this->merge(ClassificationInput::normalize($this->all(), 'category'));
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, ValidationRule|array<mixed>|string>
-     */
+    public function authorize(): bool
+    {
+        return $this->user()?->can('manageClassifications', [Product::class, $this->route('company')]) === true;
+    }
+
+    /** @return array<string, mixed> */
     public function rules(): array
     {
-        return [
-            'parent_id' => ['nullable','integer',Rule::exists('categories','id')
-                ->where('company_id',$this->route('company')->id),],
-            'name' => ['required','string','max:255',],
-            'code' => ['required', 'string', 'max:255',]
-        ];
+        $rules = ClassificationInput::rules($this->route('company'), 'category');
+
+        return $rules;
     }
 }
