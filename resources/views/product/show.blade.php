@@ -20,7 +20,7 @@
             </p>
         </div>
 
-        <div class="flex items-center gap-3">
+        <div class="flex flex-wrap items-center gap-3">
 
             <a
                 href="{{ route('product.index', ['company' => $company]) }}"
@@ -34,6 +34,11 @@
     </div>
 
 
+    @unless($product->is_active)<p role="status" class="min-w-0 break-words">Archived Product. Profile corrections preserve archived status.</p>@endunless
+    <div class="flex flex-wrap gap-3">
+    @can('update', [\App\Models\Product\Product::class, $company])<a class="rounded-lg border border-slate-700 px-4 py-2 focus:ring-2" href="{{ route('product.edit', [$company, $product]) }}">Edit profile</a>@endcan
+    @can('archive', [\App\Models\Product\Product::class, $company])<form method="POST" action="{{ route($product->is_active ? 'product.archive' : 'product.restore', [$company, $product]) }}">@csrf @method('PATCH')<button class="rounded-lg border border-slate-700 px-4 py-2 focus:ring-2">{{ $product->is_active ? 'Archive' : 'Restore' }}</button></form>@endcan
+    </div>
     {{-- Product --}}
     <div class="grid gap-6 lg:grid-cols-3">
 
@@ -224,7 +229,7 @@
             {{-- Prices --}}
             <section class="rounded-2xl border border-slate-900 bg-transparent p-6">
 
-                <div class="flex items-center justify-between">
+                <div class="flex flex-wrap items-center justify-between">
 
                     <h2 class="text-lg font-semibold text-slate-100 break-words">
                         Prices
@@ -240,7 +245,7 @@
 
                     <div class="mt-4 rounded-lg border border-slate-900 p-4">
 
-                        <div class="flex items-center justify-between gap-4">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
 
                             <div>
 
@@ -284,10 +289,10 @@
                 @forelse ($product->barcodes as $barcode)
 
                     <div
-                        class="mt-4 flex items-center justify-between rounded-lg border border-slate-900 p-3"
+                        class="mt-4 flex flex-wrap items-center justify-between rounded-lg border border-slate-900 p-3"
                     >
 
-                        <span class="font-mono text-sm text-slate-200">
+                        <span class="min-w-0 break-words font-mono text-sm text-slate-200">
                             {{ $barcode->barcode }}
                         </span>
 
@@ -312,7 +317,7 @@
             @if ($canViewSuppliers)
             <section class="rounded-2xl border border-slate-900 bg-transparent p-6">
 
-                <div class="flex items-center justify-between">
+                <div class="flex flex-wrap items-center justify-between">
 
                     <h2 class="text-lg font-semibold text-slate-100 break-words">
                         Suppliers

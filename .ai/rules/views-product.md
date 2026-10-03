@@ -6,4 +6,4 @@ paths:
 # Views Product
 
 ## Product View Boundaries
-Display product identity, category, unit, brand, prices, barcodes, and supplier information supplied by PHP. Blade must not enforce product relationships, price uniqueness, SKU generation, or persistence behavior.
+Prepare scalar-safe form values and Company-scoped options in PHP. Preserve current historical references explicitly, associate validation errors with their controls, and render each validation summary once. Preserve only validated filters in pagination. Keep Blade free of database queries and wrap business identifiers without truncation.

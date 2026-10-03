@@ -7,6 +7,7 @@ namespace App\Services\Product;
 use App\Enums\BarcodeType;
 use App\Enums\ProductType;
 use App\Models\Company\Company;
+use App\Models\Product\Product;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator as Validation;
@@ -119,5 +120,38 @@ final class ProductInput
         $validator->after(self::after(...));
 
         return $validator->validate();
+    }
+
+    /** @return array<string, mixed> */
+    public static function profileRules(Company $company, Product $product): array
+    {
+        $rules = ['name' => ['required', 'string', 'max:255'], 'description' => ['nullable', 'string', 'max:5000']];
+        foreach (['category' => 'categories', 'unit' => 'units', 'brand' => 'brands'] as $field => $table) {
+            $column = $field.'_id';
+            $rules[$column] = [$field === 'brand' ? 'nullable' : 'required', 'integer', Rule::exists($table, 'id')->where('company_id', $company->id)->where(fn ($query) => $query->where('is_active', true)->orWhere('id', $product->{$column} ?? 0))];
+        }
+        foreach (['company_id', 'sku', 'uuid', 'prefix', 'type', 'product_type', 'track_stock', 'track_batch', 'track_serial', 'is_active', 'prices', 'barcodes', 'suppliers', 'supplier_id', 'supplier_ids'] as $key) {
+            $rules[$key] = ['missing'];
+        }
+
+        return $rules;
+    }
+
+    /** @param array<string, mixed> $values @return array<string, mixed> */
+    public static function validateProfile(array $values, Company $company, Product $product): array
+    {
+        foreach (['name', 'description'] as $key) {
+            if (isset($values[$key]) && is_string($values[$key])) {
+                $values[$key] = trim($values[$key]);
+            }
+        }
+
+        return Validator::make($values, self::profileRules($company, $product))->validate();
+    }
+
+    /** @param array<string, mixed> $values @return array<string, string> */
+    public static function displayValues(array $values): array
+    {
+        return array_map(fn ($value): string => is_scalar($value) ? (string) $value : '', $values);
     }
 }

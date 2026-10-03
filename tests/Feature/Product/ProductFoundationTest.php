@@ -273,15 +273,14 @@ it('correction identity protects model mass assignment and trusted factory setup
     expect($factory->company_id)->toBe($company->id)->and($factory->sku)->toBe('TRUSTED-FACTORY')->and($factory->isFillable('company_id'))->toBeFalse()->and($factory->isFillable('sku'))->toBeFalse();
 });
 
-it('correction identity rejects direct and unavailable HTTP update input', function () {
+it('correction identity rejects direct and HTTP update input', function () {
     [$owner, $company, $values] = productContext();
     $product = app(CreateProduct::class)->handle($company, $owner, $values);
     $identity = [$product->company_id, $product->sku];
     foreach (['company_id' => 99999, 'sku' => 'FORGED'] as $field => $value) {
         expect(fn () => app(UpdateProduct::class)->handle($company, $product, $owner, [...$values, $field => $value]))->toThrow(ValidationException::class);
-        foreach (['put', 'patch'] as $method) {
-            $this->actingAs($owner)->{$method}(route('product.show', [$company, $product]), [...$values, $field => $value])->assertStatus(405);
-        }
+        $this->actingAs($owner)->put(route('product.show', [$company, $product]), [...$values, $field => $value])->assertStatus(405);
+        $this->patch(route('product.update', [$company, $product]), [...$values, $field => $value])->assertSessionHasErrors($field);
     }
     expect([$product->fresh()->company_id, $product->fresh()->sku])->toBe($identity);
 });

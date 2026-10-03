@@ -23,7 +23,9 @@ final class UnitRequest extends FormRequest
     /** @return array<string, mixed> */
     public function rules(): array
     {
-        $rules = ClassificationInput::rules($this->route('company'), 'unit');
+        $company = $this->route('company');
+        $record = $this->route('unit') === null ? null : $company->units()->where('uuid', $this->route('unit'))->firstOrFail();
+        $rules = ClassificationInput::rules($company, 'unit', $record?->id);
 
         return $rules;
     }

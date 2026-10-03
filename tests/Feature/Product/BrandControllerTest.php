@@ -2,9 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Actions\Product\RestoreBrand;
 use Database\Factories\BrandFactory;
 use Database\Factories\CompanyFactory;
+use Database\Factories\ProductFactory;
 use Database\Factories\UserFactory;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Tests\Support\RefreshProductDatabase;
 use Tests\Support\SupplierFixture;
 
@@ -212,4 +216,22 @@ it('does not archive a brand through another company', function () {
 
     $response->assertNotFound();
     $this->assertModelExists($brand);
+});
+
+it('restores a referenced Brand idempotently with current classification authority', function () {
+    [$owner, $company] = SupplierFixture::owner();
+    $brand = BrandFactory::new()->create(['company_id' => $company->id, 'is_active' => false]);
+    $product = ProductFactory::new()->create(['company_id' => $company->id, 'brand_id' => $brand->id]);
+    $actor = SupplierFixture::member($company, ['products.classifications.manage']);
+    foreach (range(1, 2) as $i) {
+        $this->actingAs($actor)->patch(route('brand.restore', [$company, $brand]))->assertRedirect(route('brand.index', $company));
+    }
+    expect($brand->fresh()->is_active)->toBeTrue()->and($product->fresh()->brand_id)->toBe($brand->id);
+    $foreign = BrandFactory::new()->create();
+    $this->patch(route('brand.restore', [$company, $foreign]))->assertNotFound();
+    expect(fn () => app(RestoreBrand::class)->handle($company, $foreign, $actor))->toThrow(ModelNotFoundException::class);
+    $actor->load('roles.permissions');
+    $actor->roles()->detach();
+    $this->patch(route('brand.restore', [$company, $brand]))->assertForbidden();
+    expect(fn () => app(RestoreBrand::class)->handle($company, $brand, $actor))->toThrow(AuthorizationException::class);
 });

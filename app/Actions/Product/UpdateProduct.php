@@ -17,8 +17,9 @@ final readonly class UpdateProduct
     {
         return DB::transaction(function () use ($company, $product, $actor, $values): Product {
             $company = ProductMutation::lock($company, $actor, 'update');
+            ProductMutation::authorize($company, $actor, 'viewAny');
             $product = $company->products()->whereKey($product->id)->lockForUpdate()->firstOrFail();
-            $product->update(ProductInput::validate($values, $company, false));
+            $product->update(ProductInput::validateProfile($values, $company, $product));
 
             return $product;
         }, 3);

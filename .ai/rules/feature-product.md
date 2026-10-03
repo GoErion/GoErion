@@ -6,4 +6,4 @@ paths:
 # Feature Product
 
 ## Product Feature Coverage
-Test the approved Product behavior, tenant isolation, validation, authorization, database effects, transactions, and applicable lifecycle or audit invariants. Do not encode unapproved business decisions in tests.
+Cover HTTP and direct-Action permission conjunctions, stale authority, tenant boundaries, immutable fields, lifecycle transitions and historical classification references. Test form round trips as well as Action calls. Compare one-row and full-page query counts including authorization with populated displayed relationships. Do not count empty skipped placeholders as concurrency specifications.

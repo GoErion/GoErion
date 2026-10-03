@@ -17,7 +17,23 @@ final class ClassificationInput
             return [...$rules, 'name' => ['required', 'string', 'max:100', Rule::unique('units', 'name')->where('company_id', $company->id)->ignore($id)], 'symbol' => ['required', 'string', 'max:20', Rule::unique('units', 'symbol')->where('company_id', $company->id)->ignore($id)]];
         }
 
-        return [...$rules, 'code' => ['required', 'string', 'max:50'], ...($type === 'category' ? ['code' => ['required', 'string', 'max:255', Rule::unique('categories', 'code')->where('company_id', $company->id)->ignore($id)], 'parent_id' => ['nullable', 'integer', Rule::exists('categories', 'id')->where('company_id', $company->id)->where('is_active', true)]] : [])];
+        if ($type === 'category') {
+            $currentParent = $id === null ? null : $company->categories()->whereKey($id)->firstOrFail()->parent_id;
+            $parent = Rule::exists('categories', 'id')->where('company_id', $company->id)
+                ->where(function ($query) use ($currentParent): void {
+                    $query->where('is_active', true);
+                    if ($currentParent !== null) {
+                        $query->orWhere('id', $currentParent);
+                    }
+                });
+
+            return [...$rules,
+                'code' => ['required', 'string', 'max:255', Rule::unique('categories', 'code')->where('company_id', $company->id)->ignore($id)],
+                'parent_id' => ['nullable', 'integer', $parent],
+            ];
+        }
+
+        return [...$rules, 'code' => ['required', 'string', 'max:50']];
     }
 
     /** @param array<string, mixed> $values @return array<string, mixed> */
@@ -41,5 +57,29 @@ final class ClassificationInput
         }
 
         return $values;
+    }
+
+    /** @return array<int, array{path: string, depth: int}> */
+    public static function paths(Company $company): array
+    {
+        $nodes = $company->categories()->get(['id', 'name', 'parent_id'])->keyBy('id');
+        $paths = [];
+        foreach ($nodes as $node) {
+            $labels = [];
+            $seen = [];
+            $cursor = $node;
+            while ($cursor !== null) {
+                if (isset($seen[$cursor->id]) || count($labels) >= 3) {
+                    $labels[] = '[Invalid hierarchy]';
+                    break;
+                }
+                $seen[$cursor->id] = true;
+                $labels[] = $cursor->name;
+                $cursor = $cursor->parent_id === null ? null : $nodes->get($cursor->parent_id);
+            }
+            $paths[$node->id] = ['path' => implode(' / ', array_reverse($labels)), 'depth' => count($labels)];
+        }
+
+        return $paths;
     }
 }

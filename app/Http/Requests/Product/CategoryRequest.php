@@ -23,7 +23,9 @@ final class CategoryRequest extends FormRequest
     /** @return array<string, mixed> */
     public function rules(): array
     {
-        $rules = ClassificationInput::rules($this->route('company'), 'category');
+        $company = $this->route('company');
+        $record = $this->route('category') === null ? null : $company->categories()->where('uuid', $this->route('category'))->firstOrFail();
+        $rules = ClassificationInput::rules($company, 'category', $record?->id);
 
         return $rules;
     }
